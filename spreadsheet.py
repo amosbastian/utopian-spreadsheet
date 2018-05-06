@@ -10,9 +10,11 @@ scope = ["https://spreadsheets.google.com/feeds",
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
     "/home/amos/Documents/utopian-sheet/client_secret.json", scope)
 client = gspread.authorize(credentials)
-sheet = client.open("Utopian Reviews").get_worksheet(1)
+sheet = client.open("Utopian Reviews").get_worksheet(0)
 pp = pprint.PrettyPrinter()
 result = sheet.col_values(3)
+banned_sheet = client.open("Utopian Reviews").get_worksheet(1)
+banned_users = banned_sheet.col_values(1)
 URL = "https://steemit.com/utopian-io/"
 
 
@@ -49,7 +51,10 @@ def main():
                 if not valid_category(category):
                     continue
             repository = get_repository(post)
-            row = ["", "", steemit_url, repository, category]
+            if post.author not in banned_users:
+                row = ["", "", steemit_url, repository, category]
+            else:
+                row = ["BANNED", "", steemit_url, repository, category, "0"]
             sheet.append_row(row)
 
 
