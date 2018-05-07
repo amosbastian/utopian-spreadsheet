@@ -1,7 +1,11 @@
 from beem.discussions import Query, Discussions_by_created
+from datetime import date, timedelta
 from oauth2client.service_account import ServiceAccountCredentials
+from pymongo import MongoClient
 from urllib.parse import urlparse
+
 import gspread
+import json
 import pprint
 
 # Everything outside because I can't be bothered doing this properly
@@ -16,6 +20,24 @@ result = sheet.col_values(3)
 banned_sheet = client.open("Utopian Reviews").get_worksheet(1)
 banned_users = zip(banned_sheet.col_values(1), banned_sheet.col_values(4))
 URL = "https://steemit.com/utopian-io/"
+
+# MongoDB
+CLIENT = MongoClient()
+DB = CLIENT.utopian
+
+CATEGORIES = {
+    "ideas": 2.0,
+    "development": 4.25,
+    "graphics": 3.0,
+    "bug-hunting": 3.25,
+    "analysis": 3.25,
+    "social": 2.0,
+    "video-tutorials": 4.0,
+    "tutorials": 4.0,
+    "copywriting": 2.0,
+    "documentation": 2.25,
+    "blog": 2.25
+}
 
 
 def valid_category(category):
@@ -38,6 +60,41 @@ def get_repository(post):
     return ""
 
 
+def moderator_points():
+    """Return a dict containing a moderator and their points."""
+    moderators = {}
+
+    # Zip moderator's name and category together
+    data = zip(sheet.col_values(1), sheet.col_values(5))
+    for moderator, category in data:
+        if moderator == "" or moderator == "Moderator":
+            continue
+
+        # Remove whitespace and count points
+        moderator = moderator.strip()
+        moderators.setdefault(moderator, 0)
+        try:
+            moderators[moderator] += CATEGORIES[category]
+        except:
+            moderators[moderator] += 1.25
+
+    # Check if moderator if community manager -> add 100 points
+    collection = DB.moderators
+    community_managers = collection.find({"supermoderator": True})
+    for manager in community_managers:
+        try:
+            moderators[manager["account"]] += 100.0
+        except:
+            continue
+
+    # Save dictionary as JSON with date of last Thursday
+    today = date.today()
+    offset = (today.weekday() - 3) % 7
+    last_thursday = today - timedelta(days=offset)
+    with open(f"{last_thursday}.json", "w") as fp:
+        json.dump(moderators, fp, indent=4)
+
+
 def main():
     query = Query(limit=100, tag="utopian-io")
     for post in Discussions_by_created(query):
@@ -56,6 +113,8 @@ def main():
             else:
                 row = ["BANNED", "", steemit_url, repository, category, "0"]
             sheet.append_row(row)
+
+    moderator_points()
 
 
 if __name__ == '__main__':
