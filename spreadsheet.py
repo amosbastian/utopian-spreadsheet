@@ -12,7 +12,7 @@ import pprint
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    "/home/amos/Documents/utopian-sheet/client_secret.json", scope)
+    "/home/amos/utopian-spreadsheet/client_secret.json", scope)
 client = gspread.authorize(credentials)
 sheet = client.open("Utopian Reviews").get_worksheet(0)
 pp = pprint.PrettyPrinter()
@@ -91,7 +91,9 @@ def moderator_points():
     today = date.today()
     offset = (today.weekday() - 3) % 7
     last_thursday = today - timedelta(days=offset)
-    with open(f"{last_thursday}.json", "w") as fp:
+    with open(
+            f"/home/amos/utopian/utopian/static/{last_thursday}.json",
+            "w") as fp:
         json.dump(moderators, fp, indent=4)
 
 
