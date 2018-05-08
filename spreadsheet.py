@@ -70,7 +70,7 @@ def moderator_points():
     # Include moderators who haven't reviewed anything yet
     collection = DB.moderators
     for moderator in collection.find():
-        moderators.setdefault(moderator, 0)
+        moderators.setdefault(moderator["account"], 0)
 
     # Zip moderator's name and category together
     data = zip(sheet.col_values(1), sheet.col_values(5))
