@@ -75,7 +75,7 @@ def moderator_points():
     # Zip moderator's name and category together
     data = zip(sheet.col_values(1), sheet.col_values(5))
     for moderator, category in data:
-        if moderator == "" or moderator == "Moderator":
+        if moderator in ("", "Moderator", "BANNED"):
             continue
 
         # Remove whitespace and count points
