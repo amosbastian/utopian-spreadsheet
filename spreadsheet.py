@@ -54,15 +54,23 @@ def valid_category(category):
 def get_repository(post):
     """Returns the first repository found in the given post."""
     url = "github.com/"
-    for link in post.json_metadata["links"]:
-        if url in link:
-            return link
+    try:
+        for link in post.json_metadata["links"]:
+            if url in link:
+                return link
+    except KeyError:
+        pass
     return ""
 
 
 def moderator_points():
     """Return a dict containing a moderator and their points."""
     moderators = {}
+
+    # Include moderators who haven't reviewed anything yet
+    collection = DB.moderators
+    for moderator in collection.find():
+        moderators.setdefault(moderator, 0)
 
     # Zip moderator's name and category together
     data = zip(sheet.col_values(1), sheet.col_values(5))
@@ -72,14 +80,12 @@ def moderator_points():
 
         # Remove whitespace and count points
         moderator = moderator.strip()
-        moderators.setdefault(moderator, 0)
         try:
             moderators[moderator] += CATEGORIES[category]
         except:
             moderators[moderator] += 1.25
 
     # Check if moderator if community manager -> add 100 points
-    collection = DB.moderators
     community_managers = collection.find({"supermoderator": True})
     for manager in community_managers:
         try:
