@@ -114,7 +114,7 @@ def main():
             tags = post.json_metadata["tags"]
             if (post.category != "utopian-io" or
                     len(tags) < 2 or
-                    post["created"] < last_thursday):
+                    post["created"].date() < last_thursday):
                 continue
             else:
                 category = tags[1]
