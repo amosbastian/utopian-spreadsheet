@@ -14,10 +14,13 @@ scope = ["https://spreadsheets.google.com/feeds",
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
     "/home/amos/utopian-spreadsheet/client_secret.json", scope)
 client = gspread.authorize(credentials)
-sheet = client.open("Utopian Reviews").get_worksheet(0)
+sheet = client.open("Utopian Reviews")
 pp = pprint.PrettyPrinter()
-result = sheet.col_values(3)
-banned_sheet = client.open("Utopian Reviews").get_worksheet(1)
+reviews = sheet.get_worksheet(0)
+reviewed = sheet.get_worksheet(-1)
+result = reviews.col_values(3) + reviewed.col_values(3)
+
+banned_sheet = sheet.get_worksheet(1)
 banned_users = zip(banned_sheet.col_values(1), banned_sheet.col_values(4))
 URL = "https://steemit.com/utopian-io/"
 
@@ -73,7 +76,7 @@ def moderator_points():
         moderators.setdefault(moderator["account"], 0)
 
     # Zip moderator's name and category together
-    data = zip(sheet.col_values(1), sheet.col_values(5))
+    data = zip(reviewed.col_values(1), reviewed.col_values(5))
     for moderator, category in data:
         if moderator in ("", "Moderator", "BANNED"):
             continue
@@ -104,17 +107,12 @@ def moderator_points():
 
 
 def main():
-    today = date.today()
-    offset = (today.weekday() - 3) % 7
-    last_thursday = today - timedelta(days=offset)
     query = Query(limit=100, tag="utopian-io")
     for post in Discussions_by_created(query):
         steemit_url = f"{URL}{post.authorperm}"
         if steemit_url not in result:
             tags = post.json_metadata["tags"]
-            if (post.category != "utopian-io" or
-                    len(tags) < 2 or
-                    post["created"].date() < last_thursday):
+            if (post.category != "utopian-io" or len(tags) < 2):
                 continue
             else:
                 category = tags[1]
@@ -125,7 +123,7 @@ def main():
                 row = ["", "", steemit_url, repository, category]
             else:
                 row = ["BANNED", "", steemit_url, repository, category, "0"]
-            sheet.append_row(row)
+            reviews.append_row(row)
 
     moderator_points()
 
