@@ -16,7 +16,7 @@ reviewed = sheet.get_worksheet(-1)
 
 
 def main():
-    time.sleep(10)
+    time.sleep(1)
     result = reviews.get_all_values()
     for row in result[1:]:
         moderator = row[0]
