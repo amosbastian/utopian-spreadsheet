@@ -44,6 +44,7 @@ def main():
                     max_vote = MAX_VOTE[category]
                 except:
                     max_vote = 4.0
+                    # Also set to pending
                 row[-2] = "Pending"
                 row[-1] = float(score) / 100.0 * max_vote
             else:
