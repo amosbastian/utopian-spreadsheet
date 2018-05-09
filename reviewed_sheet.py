@@ -14,6 +14,21 @@ sheet = client.open("Utopian Reviews")
 reviews = sheet.get_worksheet(0)
 reviewed = sheet.get_worksheet(-1)
 
+MAX_VOTE = {
+    "ideas": 5.0,
+    "development": 30.0,
+    "bug-hunting": 8.0,
+    "translations": 20.0,
+    "graphics": 25.0,
+    "analysis": 25.0,
+    "social": 15.0,
+    "documentation": 15.0,
+    "tutorials": 15.0,
+    "video-tutorials": 20.0,
+    "copywriting": 15.0,
+    "blog": 15.0,
+}
+
 
 def main():
     time.sleep(1)
@@ -22,11 +37,20 @@ def main():
         moderator = row[0]
         score = row[5]
         if moderator != "" and score != "":
-            print("Deleting row {} at index {}".format(row,
-                                                       result.index(row) + 1))
+            # Calculate voting %
+            if float(score) >= 40:
+                category = row[4]
+                try:
+                    max_vote = MAX_VOTE[category]
+                except:
+                    max_vote = 4.0
+                row[-1] = float(score) / 100.0 * max_vote
+            else:
+                row[-1] = 0.0
             reviews.delete_row(result.index(row) + 1)
             reviewed.append_row(row)
             return
 
 if __name__ == '__main__':
     main()
+
