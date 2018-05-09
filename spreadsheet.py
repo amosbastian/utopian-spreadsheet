@@ -107,12 +107,17 @@ def moderator_points():
 
 
 def main():
+    today = date.today()
+    offset = (today.weekday() - 3) % 7
+    last_thursday = today - timedelta(days=offset)
     query = Query(limit=100, tag="utopian-io")
     for post in Discussions_by_created(query):
         steemit_url = f"{URL}{post.authorperm}"
         if steemit_url not in result:
             tags = post.json_metadata["tags"]
-            if (post.category != "utopian-io" or len(tags) < 2):
+            if (post.category != "utopian-io" or
+                    len(tags) < 2 or
+                    post["created"].date() < last_thursday):
                 continue
             else:
                 category = tags[1]
