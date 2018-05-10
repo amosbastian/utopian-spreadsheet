@@ -127,7 +127,8 @@ def main():
             if (post.author, "Yes") not in banned_users:
                 row = ["", "", steemit_url, repository, category]
             else:
-                row = ["BANNED", str(today), steemit_url, repository, category, "0"]
+                row = ["BANNED", str(today), steemit_url, repository, category,
+                       "0", "", "", "", 0]
             reviews.append_row(row)
 
     moderator_points()
