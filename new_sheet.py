@@ -19,7 +19,7 @@ def main():
     next_thursday = last_thursday + timedelta(days=7)
     title_reviews = f"Week {last_thursday:%b %-d} - {next_thursday:%b %-d}"
     title_reviewed = "Reviewed - " + title_reviews
-    title_reviews = "Unreviewd - " + title_reviews
+    title_reviews = "Unreviewed - " + title_reviews
     # Get sheet and some variables
     reviews = sheet.get_worksheet(0)
     header = reviews.row_values(1)
