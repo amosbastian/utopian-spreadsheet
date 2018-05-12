@@ -15,14 +15,14 @@ def main():
     # Date stuff
     today = date.today()
     offset = (today.weekday() - 3) % 7
-    last_thursday = today - timedelta(days=offset)
-    next_thursday = last_thursday + timedelta(days=7)
-    title_reviews = f"Week {last_thursday:%b %-d} - {next_thursday:%b %-d}"
-    title_reviewed = "Reviewed - " + title_reviews
+    this_week = today - timedelta(days=offset)
+    next_week = this_week + timedelta(days=7)
+    title_unreviewed = f"Unreviewed - {this_week:%b %-d} - {next_week:%b %-d}"
+    title_reviewed = f"Reviewed - {this_week:%b %-d} - {next_week:%b %-d}"
     # Get sheet and some variables
-    reviews = sheet.get_worksheet(0)
+    reviews = sheet.worksheet(title_unreviewed)
     header = reviews.row_values(1)
-    reviews.update_title(title_reviews)
+    reviews.update_title(title_unreviewed)
 
     worksheet = sheet.add_worksheet(
         title=title_reviewed, rows="999", cols="11")

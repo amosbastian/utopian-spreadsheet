@@ -11,8 +11,16 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name(
     "/home/amos/utopian-spreadsheet/client_secret.json", scope)
 client = gspread.authorize(credentials)
 sheet = client.open("Utopian Reviews")
-reviews = sheet.get_worksheet(0)
-reviewed = sheet.get_worksheet(-1)
+
+today = date.today()
+offset = (today.weekday() - 3) % 7
+this_week = today - timedelta(days=offset)
+next_week = this_week + timedelta(days=7)
+title_unreviewed = f"Unreviewed - {this_week:%b %-d} - {next_week:%b %-d}"
+title_reviewed = f"Reviewed - {this_week:%b %-d} - {next_week:%b %-d}"
+
+unreviewed = sheet.worksheet(title_unreviewed)
+reviewed = sheet.worksheet(title_reviewed)
 
 MAX_VOTE = {
     "ideas": 5.0,
@@ -32,7 +40,7 @@ MAX_VOTE = {
 
 def main():
     time.sleep(1)
-    result = reviews.get_all_values()
+    result = unreviewed.get_all_values()
     for row in result[1:]:
         moderator = row[0]
         score = row[5]
@@ -49,10 +57,9 @@ def main():
                 row[-1] = float(score) / 100.0 * max_vote
             else:
                 row[-1] = 0.0
-            reviews.delete_row(result.index(row) + 1)
+            unreviewed.delete_row(result.index(row) + 1)
             reviewed.append_row(row)
             return
 
 if __name__ == '__main__':
     main()
-

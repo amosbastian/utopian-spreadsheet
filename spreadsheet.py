@@ -6,28 +6,38 @@ from urllib.parse import urlparse
 
 import gspread
 import json
-import pprint
 
-# Everything outside because I can't be bothered doing this properly
+# Spreadsheet
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
     "/home/amos/utopian-spreadsheet/client_secret.json", scope)
 client = gspread.authorize(credentials)
 sheet = client.open("Utopian Reviews")
-pp = pprint.PrettyPrinter()
-reviews = sheet.get_worksheet(0)
-reviewed = sheet.get_worksheet(-1)
-result = reviews.col_values(3) + reviewed.col_values(3)
 
-banned_sheet = sheet.get_worksheet(1)
+# Dates
+today = date.today()
+offset = (today.weekday() - 3) % 7
+this_week = today - timedelta(days=offset)
+next_week = this_week + timedelta(days=7)
+
+# Use title to select worksheet
+title_unreviewed = f"Unreviewed - {this_week:%b %-d} - {next_week:%b %-d}"
+title_reviewed = f"Reviewed - {this_week:%b %-d} - {next_week:%b %-d}"
+unreviewed = sheet.worksheet(title_unreviewed)
+reviewed = sheet.worksheet(title_reviewed)
+result = unreviewed.col_values(3) + reviewed.col_values(3)
+banned_sheet = sheet.worksheet("Banned users")
 banned_users = zip(banned_sheet.col_values(1), banned_sheet.col_values(4))
+
+# URL
 URL = "https://steemit.com/utopian-io/"
 
 # MongoDB
 CLIENT = MongoClient()
 DB = CLIENT.utopian
 
+# Points per category
 CATEGORIES = {
     "ideas": 2.0,
     "development": 4.25,
@@ -97,39 +107,41 @@ def moderator_points():
             continue
 
     # Save dictionary as JSON with date of last Thursday
-    today = date.today()
-    offset = (today.weekday() - 3) % 7
-    last_thursday = today - timedelta(days=offset)
     with open(
-            f"/home/amos/utopian/utopian/static/{last_thursday}.json",
+            f"/home/amos/utopian/utopian/static/{this_week}.json",
             "w") as fp:
         json.dump(moderators, fp, indent=4)
 
 
 def main():
-    today = date.today()
-    offset = (today.weekday() - 3) % 7
-    last_thursday = today - timedelta(days=offset)
+    """
+    Iterates over the most recently created contributions and adds them to the
+    spreadsheet if not already in there.
+    """
     query = Query(limit=100, tag="utopian-io")
     for post in Discussions_by_created(query):
         steemit_url = f"{URL}{post.authorperm}"
         if steemit_url not in result:
             tags = post.json_metadata["tags"]
+
+            # Checking if valid post
             if (post.category != "utopian-io" or
                     len(tags) < 2 or
-                    post["created"].date() < last_thursday):
+                    post["created"].date() < this_week):
                 continue
             else:
                 category = tags[1]
                 if not valid_category(category):
                     continue
             repository = get_repository(post)
+
+            # If user banned, set moderator as BANNED and score to 0
             if (post.author, "Yes") not in banned_users:
                 row = ["", "", steemit_url, repository, category]
             else:
                 row = ["BANNED", str(today), steemit_url, repository, category,
                        "0", "", "", "", 0]
-            reviews.append_row(row)
+            unreviewed.append_row(row)
 
     moderator_points()
 
