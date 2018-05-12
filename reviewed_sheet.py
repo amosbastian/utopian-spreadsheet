@@ -43,8 +43,9 @@ def main():
     result = unreviewed.get_all_values()
     for row in result[1:]:
         moderator = row[0]
+        date = row[1]
         score = row[5]
-        if moderator != "" and score != "":
+        if moderator != "" and date != "" and score != "":
             # Calculate voting %
             if float(score) >= 40:
                 category = row[4]
