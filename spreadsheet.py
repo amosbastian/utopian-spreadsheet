@@ -11,9 +11,9 @@ import json
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    "/home/amos/Documents/utopian-sheet/client_secret.json", scope)
+    "/home/amos/utopian-spreadsheet/client_secret.json", scope)
 client = gspread.authorize(credentials)
-sheet = client.open("Copy of Utopian Reviews")
+sheet = client.open("Utopian Reviews")
 
 # Dates
 today = date.today()
@@ -110,7 +110,7 @@ def moderator_points():
 
     # Save dictionary as JSON with date of last Thursday
     with open(
-            f"/home/amos/Documents/utopian-sheet/{this_week}.json",
+            f"/home/amos/utopian/utopian/static/{this_week}.json",
             "w") as fp:
         json.dump(moderators, fp, indent=4)
 
