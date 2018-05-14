@@ -92,7 +92,7 @@ def moderator_points():
     for moderator, category in data:
         if moderator in ("", "Moderator", "BANNED"):
             continue
-
+        moderators.setdefault(moderator, 0)
         # Remove whitespace and count points
         moderator = moderator.strip()
         try:
