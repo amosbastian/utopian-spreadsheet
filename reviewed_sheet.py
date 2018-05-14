@@ -47,7 +47,7 @@ def main():
         score = row[5]
         if moderator != "" and date != "" and score != "":
             # Calculate voting %
-            if float(score) >= 40:
+            if float(score) >= 20:
                 category = row[4]
                 try:
                     max_vote = MAX_VOTE[category]
