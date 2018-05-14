@@ -11,9 +11,9 @@ import json
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    "/home/amos/utopian-spreadsheet/client_secret.json", scope)
+    "/home/amos/Documents/utopian-sheet/client_secret.json", scope)
 client = gspread.authorize(credentials)
-sheet = client.open("Utopian Reviews")
+sheet = client.open("Copy of Utopian Reviews")
 
 # Dates
 today = date.today()
@@ -70,6 +70,8 @@ def get_repository(post):
     try:
         for link in post.json_metadata["links"]:
             if url in link:
+                if url.startswith("/exit?url="):
+                    url = url[len("/exit?url="):]
                 return link
     except KeyError:
         pass
@@ -108,7 +110,7 @@ def moderator_points():
 
     # Save dictionary as JSON with date of last Thursday
     with open(
-            f"/home/amos/utopian/utopian/static/{this_week}.json",
+            f"/home/amos/Documents/utopian-sheet/{this_week}.json",
             "w") as fp:
         json.dump(moderators, fp, indent=4)
 
@@ -131,6 +133,9 @@ def main():
                 continue
             else:
                 category = tags[1]
+                # Check for McFarhat
+                if category == "tutorial":
+                    category = "tutorials"
                 if not valid_category(category):
                     continue
             repository = get_repository(post)
