@@ -1,4 +1,5 @@
 from beem.discussions import Query, Discussions_by_created
+from beem.comment import Comment
 from datetime import date, timedelta
 from oauth2client.service_account import ServiceAccountCredentials
 from pymongo import MongoClient
@@ -6,12 +7,16 @@ from urllib.parse import urlparse
 
 import gspread
 import json
+import os
+
+# Get path of current folder
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 # Spreadsheet
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    "/home/amos/utopian-spreadsheet/client_secret.json", scope)
+    f"{DIR_PATH}/client_secret.json", scope)
 client = gspread.authorize(credentials)
 sheet = client.open("Utopian Reviews")
 
@@ -70,8 +75,8 @@ def get_repository(post):
     try:
         for link in post.json_metadata["links"]:
             if url in link:
-                if url.startswith("/exit?url="):
-                    url = url[len("/exit?url="):]
+                if link.startswith("/exit?url="):
+                    link = link[len("/exit?url="):]
                 return link
     except KeyError:
         pass
