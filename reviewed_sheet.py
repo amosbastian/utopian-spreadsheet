@@ -4,6 +4,9 @@ import gspread
 import pprint
 import time
 
+# Minimum score
+MINIMUM_SCORE = 10
+
 # Everything outside because I can't be bothered doing this properly
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
@@ -47,7 +50,7 @@ def main():
         score = row[5]
         if moderator != "" and date != "" and score != "":
             # Calculate voting %
-            if float(score) >= 20:
+            if float(score) >= MINIMUM_SCORE:
                 category = row[4]
                 try:
                     max_vote = MAX_VOTE[category]
