@@ -3,6 +3,10 @@ from oauth2client.service_account import ServiceAccountCredentials
 import gspread
 import pprint
 import time
+import os
+
+# Get path of current folder
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 # Minimum score
 MINIMUM_SCORE = 10
@@ -11,7 +15,7 @@ MINIMUM_SCORE = 10
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    "/home/amos/utopian-spreadsheet/client_secret.json", scope)
+    f"{DIR_PATH}/client_secret.json", scope)
 client = gspread.authorize(credentials)
 sheet = client.open("Utopian Reviews")
 
