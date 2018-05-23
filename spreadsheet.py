@@ -49,7 +49,6 @@ reviewed = sheet.worksheet(title_reviewed)
 last = sheet.worksheet(title_last)
 
 # Get all relevant URLs
-result = unreviewed.col_values(3) + reviewed.col_values(3) + last.col_values(3)
 banned_sheet = sheet.worksheet("Banned users")
 banned_users = zip(banned_sheet.col_values(1), banned_sheet.col_values(4))
 
@@ -138,15 +137,23 @@ def moderator_points():
         json.dump(moderators, fp, indent=4)
 
 
+def get_urls():
+    return (unreviewed.col_values(3) +
+            reviewed.col_values(3) +
+            last.col_values(3))
+
+
 def main():
     """
     Iterates over the most recently created contributions and adds them to the
     spreadsheet if not already in there.
     """
     query = Query(limit=100, tag="utopian-io")
+    result = get_urls()
     for post in Discussions_by_created(query):
         steemit_url = f"{URL}{post.authorperm}"
         if steemit_url not in result:
+
             tags = post.json_metadata["tags"]
 
             # Checking if valid post
@@ -170,7 +177,7 @@ def main():
                 row = ["BANNED", str(today), steemit_url, repository, category,
                        "0", "", "", "", 0]
             unreviewed.append_row(row)
-            result.append(steemit_url)
+            result = get_urls()
             logger.info(f"Adding {steemit_url} to the spreadsheet.")
 
     moderator_points()
