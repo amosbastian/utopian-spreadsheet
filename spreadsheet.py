@@ -7,10 +7,21 @@ from urllib.parse import urlparse
 
 import gspread
 import json
+import logging
 import os
 
 # Get path of current folder
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+
+# Logging
+logger = logging.getLogger("utopian-io")
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(f"{DIR_PATH}/spreadsheet.log")
+fh.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
 # Spreadsheet
 scope = ["https://spreadsheets.google.com/feeds",
@@ -25,13 +36,20 @@ today = date.today()
 offset = (today.weekday() - 3) % 7
 this_week = today - timedelta(days=offset)
 next_week = this_week + timedelta(days=7)
+last_week = this_week - timedelta(days=7)
 
 # Use title to select worksheet
 title_unreviewed = f"Unreviewed - {this_week:%b %-d} - {next_week:%b %-d}"
 title_reviewed = f"Reviewed - {this_week:%b %-d} - {next_week:%b %-d}"
+title_last = f"Reviewed - {last_week:%b %-d} - {this_week:%b %-d}"
+
+# Get all relevant worksheets
 unreviewed = sheet.worksheet(title_unreviewed)
 reviewed = sheet.worksheet(title_reviewed)
-result = unreviewed.col_values(3) + reviewed.col_values(3)
+last = sheet.worksheet(title_last)
+
+# Get all relevant URLs
+result = unreviewed.col_values(3) + reviewed.col_values(3) + last.col_values(3)
 banned_sheet = sheet.worksheet("Banned users")
 banned_users = zip(banned_sheet.col_values(1), banned_sheet.col_values(4))
 
@@ -152,6 +170,8 @@ def main():
                 row = ["BANNED", str(today), steemit_url, repository, category,
                        "0", "", "", "", 0]
             unreviewed.append_row(row)
+            result.append(steemit_url)
+            logger.info(f"Adding {steemit_url} to the spreadsheet.")
 
     moderator_points()
 
