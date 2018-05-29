@@ -77,13 +77,30 @@ CATEGORIES = {
 
 def valid_category(category):
     """Returns True if category is valid, otherwise False"""
-    if (category in ("ideas", "development", "graphics", "bug-hunting",
-                     "analysis", "social", "video-tutorials", "tutorials",
-                     "copywriting", "documentation", "blog") or
-            "task" in category):
-        return True
+    if "idea" in category or "suggestion" in category:
+        return True, "ideas"
+    elif "develop" in category:
+        return True, "development"
+    elif "graphic" in category:
+        return True, "graphics"
+    elif "bug" in category or "hunt" in category:
+        return True, "bug-hunting"
+    elif "anal" in category:
+        return True, "analysis"
+    elif "visibility" in category or "social" in category:
+        return True, "social"
+    elif "video" in category:
+        return True, "video-tutorials"
+    elif category == "tutorial" or category == "tutorials":
+        return True, "tutorials"
+    elif "copy" in category:
+        return True, "copywriting"
+    elif "docu" in category:
+        return True, "documentation"
+    elif "blog" in category or "task" in category:
+        return True, category
     else:
-        return False
+        return False, ""
 
 
 def get_repository(post):
@@ -163,10 +180,10 @@ def main():
                 continue
             else:
                 category = tags[1]
-                # Check for McFarhat
-                if category == "tutorial":
-                    category = "tutorials"
-                if not valid_category(category):
+                is_valid, category = valid_category(category)
+                if not is_valid:
+                    logger.error(f"{steemit_url} has tags: {tags} and was not "
+                                 "added")
                     continue
             repository = get_repository(post)
 
@@ -184,4 +201,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as error:
+        logger.error(error)
