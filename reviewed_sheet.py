@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
+import logging
 import pprint
 import time
 import os
@@ -10,6 +11,16 @@ DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 # Minimum score
 MINIMUM_SCORE = 10
+
+# Logging
+logger = logging.getLogger("utopian-io")
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(f"{DIR_PATH}/reviewed.log")
+fh.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
 # Everything outside because I can't be bothered doing this properly
 scope = ["https://spreadsheets.google.com/feeds",
@@ -65,6 +76,8 @@ def main():
                 row[-1] = float(score) / 100.0 * max_vote
             else:
                 row[-1] = 0.0
+
+            logger.info(f"Moving {row[3]} to reviewed sheet.")
             unreviewed.delete_row(result.index(row) + 1)
             reviewed.append_row(row)
             return
