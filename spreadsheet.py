@@ -129,6 +129,10 @@ def moderator_points():
     # Zip moderator's name and category together
     data = zip(reviewed.col_values(1), reviewed.col_values(5))
     for moderator, category in data:
+        try:
+            moderator = moderator.lower()
+        except Exception:
+            pass
         if moderator in ("", "Moderator", "BANNED"):
             continue
         moderators.setdefault(moderator, 0)
