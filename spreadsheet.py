@@ -133,7 +133,7 @@ def moderator_points():
             moderator = moderator.lower()
         except Exception:
             pass
-        if moderator in ("", "Moderator", "BANNED"):
+        if moderator in ("", "moderator", "banned"):
             continue
         moderators.setdefault(moderator, 0)
         # Remove whitespace and count points
