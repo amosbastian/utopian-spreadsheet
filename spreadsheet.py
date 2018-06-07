@@ -132,14 +132,14 @@ def moderator_points():
     data = zip(reviewed.col_values(1), reviewed.col_values(5))
     for moderator, category in data:
         try:
-            moderator = moderator.lower()
+            moderator = moderator.lower().strip()
         except Exception:
             pass
         if moderator in ("", "moderator", "banned"):
             continue
+
         moderators.setdefault(moderator, 0)
-        # Remove whitespace and count points
-        moderator = moderator.strip()
+
         try:
             moderators[moderator] += CATEGORIES[category]
         except:
