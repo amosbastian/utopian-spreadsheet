@@ -77,7 +77,7 @@ def main():
             else:
                 row[-1] = 0.0
 
-            logger.info(f"Moving {row[3]} to reviewed sheet with voting %: "
+            logger.info(f"Moving {row[2]} to reviewed sheet with voting %: "
                         f"{row[-1]}")
             unreviewed.delete_row(result.index(row) + 1)
             reviewed.append_row(row)
