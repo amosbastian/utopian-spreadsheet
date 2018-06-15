@@ -71,7 +71,8 @@ CATEGORIES = {
     "tutorials": 4.0,
     "copywriting": 2.0,
     "documentation": 2.25,
-    "blog": 2.25
+    "blog": 2.25,
+    "translations": 4.0
 }
 
 
@@ -126,7 +127,10 @@ def moderator_points():
     # Include moderators who haven't reviewed anything yet
     collection = DB.moderators
     for moderator in collection.find():
-        moderators.setdefault(moderator["account"], 0)
+        moderators.setdefault(moderator["account"], {
+            "points": 0,
+            "reviewed": 0
+        })
 
     # Zip moderator's name and category together
     data = zip(reviewed.col_values(1), reviewed.col_values(5))
@@ -135,23 +139,32 @@ def moderator_points():
             moderator = moderator.lower().strip()
         except Exception:
             pass
-        if moderator in ("", "moderator", "banned"):
+
+        if moderator not in moderators.keys():
             continue
 
-        moderators.setdefault(moderator, 0)
-
         try:
-            moderators[moderator] += CATEGORIES[category]
+            # Normal contribution
+            moderators[moderator]["points"] += CATEGORIES[category]
         except:
-            moderators[moderator] += 1.25
+            # Task request
+            moderators[moderator]["points"] += 1.25
+
+        moderators[moderator]["reviewed"] += 1
 
     # Check if moderator if community manager -> add 100 points
-    community_managers = collection.find({"supermoderator": True})
-    for manager in community_managers:
-        try:
-            moderators[manager["account"]] += 100.0
-        except:
-            continue
+    community_managers = [
+        moderator["account"] for moderator in
+        collection.find({"supermoderator": True})]
+
+    for moderator, value in moderators.items():
+        if moderator in community_managers:
+            value["points"] += 100.0
+        else:
+            if value["reviewed"] >= 5:
+                value["points"] += 30.0
+
+        moderators[moderator] = value["points"]
 
     # Save dictionary as JSON with date of last Thursday
     with open(
