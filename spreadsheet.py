@@ -52,6 +52,10 @@ last = sheet.worksheet(title_last)
 banned_sheet = sheet.worksheet("Banned users")
 banned_users = zip(banned_sheet.col_values(1), banned_sheet.col_values(4))
 
+# Get all translators
+translator_sheet = sheet.worksheet("Translators")
+UTOPIAN_TRANSLATORS = translator_sheet.col_values(1)
+
 # URL
 URL = "https://steemit.com/utopian-io/"
 
@@ -102,6 +106,8 @@ def valid_category(category):
         return True, "copywriting"
     elif "docu" in category:
         return True, "documentation"
+    elif "translation" in category:
+        return True, "translations"
     else:
         return False, ""
 
@@ -203,6 +209,11 @@ def main():
                 if not is_valid:
                     logger.error(f"{steemit_url} has tags: {tags} and was not "
                                  "added")
+                    continue
+                elif (category == "translations" and
+                      post.author not in UTOPIAN_TRANSLATORS):
+                    logger.error(f"{steemit_url} not made by accepted "
+                                 f"translator!")
                     continue
             repository = get_repository(post)
 
