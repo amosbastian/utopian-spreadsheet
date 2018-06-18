@@ -169,7 +169,7 @@ def moderator_points():
 
             # Check for BOSSPOEM
             if moderator == "espoem":
-                value["points"] == 400.0
+                value["points"] = 400.0
         else:
             if value["reviewed"] >= 5:
                 value["points"] += 30.0
