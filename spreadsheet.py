@@ -54,7 +54,7 @@ banned_users = zip(banned_sheet.col_values(1), banned_sheet.col_values(4))
 
 # Get all translators
 translator_sheet = sheet.worksheet("Translators")
-UTOPIAN_TRANSLATORS = translator_sheet.col_values(1)
+UTOPIAN_TRANSLATORS = translator_sheet.col_values(1)[1:]
 
 # URL
 URL = "https://steemit.com/utopian-io/"
