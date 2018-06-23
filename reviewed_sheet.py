@@ -41,19 +41,45 @@ unreviewed = sheet.worksheet(title_unreviewed)
 reviewed = sheet.worksheet(title_reviewed)
 
 MAX_VOTE = {
-    "ideas": 12.0,
-    "development": 40.0,
-    "bug-hunting": 8.0,
-    "translations": 25.0,
-    "graphics": 30.0,
-    "analysis": 35.0,
-    "social": 20.0,
-    "documentation": 20.0,
-    "tutorials": 20.0,
-    "video-tutorials": 25.0,
-    "copywriting": 20.0,
-    "blog": 20.0,
+    "ideas": 20.0,
+    "development": 55.0,
+    "bug-hunting": 13.0,
+    "translations": 35.0,
+    "graphics": 40.0,
+    "analysis": 45.0,
+    "social": 30.0,
+    "documentation": 30.0,
+    "tutorials": 30.0,
+    "video-tutorials": 35.0,
+    "copywriting": 30.0,
+    "blog": 30.0,
 }
+MAX_TASK_REQUEST = 6.0
+
+# Exponential vote
+EXP_POWER = 2.1
+
+
+def exponential_vote(score, category):
+    """
+    Calculates the exponential vote for the bot.
+    """
+    status = ""
+
+    try:
+        max_vote = MAX_VOTE[category]
+    except:
+        max_vote = MAX_TASK_REQUEST
+
+    if score < MINIMUM_SCORE:
+        vote_pct = 0.0
+    else:
+        status = "Pending"
+        vote_pct = pow(
+            score / 100.0,
+            EXP_POWER - (score / 100.0 * (EXP_POWER - 1.0))) * max_vote
+
+    return status, f"{vote_pct:.2f}"
 
 
 def main():
@@ -65,17 +91,8 @@ def main():
         score = row[5]
         if moderator != "" and date != "" and score != "":
             # Calculate voting %
-            if float(score) >= MINIMUM_SCORE:
-                category = row[4]
-                try:
-                    max_vote = MAX_VOTE[category]
-                except:
-                    max_vote = 4.0
-                    # Also set to pending
-                row[-2] = "Pending"
-                row[-1] = float(score) / 100.0 * max_vote
-            else:
-                row[-1] = 0.0
+            category = row[4]
+            row[-2], row[-1] = exponential_vote(float(score), category)
 
             logger.info(f"Moving {row[2]} to reviewed sheet with voting %: "
                         f"{row[-1]}")
