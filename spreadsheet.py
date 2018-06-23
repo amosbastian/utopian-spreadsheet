@@ -189,6 +189,19 @@ def get_urls():
             last.col_values(3))
 
 
+def banned_comment(url):
+    """
+    Comments on the given contribution letting them know that they are banned.
+    """
+    post = Comment(url)
+    comment = (
+        f"Hi, @{post.author}. Your account has been excluded from the Utopian "
+        "rewarding system and therefore this contribution post will not be "
+        "reviewed. You can contact us at https://support.utopian.io/ if you "
+        "have any further questions.")
+    post.reply(comment, author="amosbastian")
+
+
 def main():
     """
     Iterates over the most recently created contributions and adds them to the
@@ -227,6 +240,9 @@ def main():
             else:
                 row = ["BANNED", str(today), steemit_url, repository, category,
                        "0", "", "", "", 0]
+                logger.info(f"Commenting on {steemit_url} letting them know "
+                            "that they are banned.")
+                banned_comment(steemit_url)
             unreviewed.append_row(row)
             result = get_urls()
             logger.info(f"Adding {steemit_url} to the spreadsheet.")
