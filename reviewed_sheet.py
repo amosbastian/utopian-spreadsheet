@@ -91,7 +91,7 @@ def main():
         score = row[5]
         if moderator != "" and date != "" and score != "":
             # Calculate voting %
-            category = row[4]
+            category = row[4].strip()
             row[-2], row[-1] = exponential_vote(float(score), category)
 
             logger.info(f"Moving {row[2]} to reviewed sheet with voting %: "
