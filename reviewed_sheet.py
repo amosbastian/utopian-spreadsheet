@@ -1,3 +1,4 @@
+from beem.comment import Comment
 from datetime import date, timedelta
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
@@ -82,6 +83,12 @@ def exponential_vote(score, category):
     return status, f"{vote_pct:.2f}"
 
 
+def vote(url, vote_pct):
+    vote_pct = vote_pct / max(MAX_VOTE.values()) * 100.0
+    contribution = Comment(url)
+    contribution.vote(vote_pct, "amosbastian")
+
+
 def main():
     time.sleep(1)
     result = unreviewed.get_all_values()
@@ -98,6 +105,9 @@ def main():
                         f"{row[-1]}")
             unreviewed.delete_row(result.index(row) + 1)
             reviewed.append_row(row)
+
+            if row[-1] > 0:
+                vote(row[3], row[-1])
             return
 
 if __name__ == '__main__':
