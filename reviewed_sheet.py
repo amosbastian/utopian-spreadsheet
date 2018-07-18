@@ -107,7 +107,7 @@ def main():
             reviewed.append_row(row)
 
             if float(score) > MINIMUM_SCORE:
-                vote(row[3], row[-1])
+                vote(row[2], row[-1])
             return
 
 if __name__ == '__main__':
