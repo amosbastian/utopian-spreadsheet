@@ -115,4 +115,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    print(exponential_vote(90.5, "development"))
