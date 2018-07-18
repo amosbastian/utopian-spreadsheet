@@ -84,7 +84,7 @@ def exponential_vote(score, category):
 
 
 def vote(url, vote_pct):
-    vote_pct = vote_pct / max(MAX_VOTE.values()) * 100.0
+    vote_pct = float(vote_pct) / max(MAX_VOTE.values()) * 100.0
     contribution = Comment(url)
     contribution.vote(vote_pct, "amosbastian")
 
