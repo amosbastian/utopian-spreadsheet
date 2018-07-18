@@ -47,6 +47,7 @@ title_last = f"Reviewed - {last_week:%b %-d} - {this_week:%b %-d}"
 unreviewed = sheet.worksheet(title_unreviewed)
 reviewed = sheet.worksheet(title_reviewed)
 last = sheet.worksheet(title_last)
+utopian_fest = sheet.worksheet("Utopian Fest")
 
 # Get all relevant URLs
 banned_sheet = sheet.worksheet("Banned users")
@@ -173,6 +174,10 @@ def moderator_points():
         else:
             if value["reviewed"] >= 5:
                 value["points"] += 30.0
+
+        # Utopian Fest bonus
+        if moderator in utopian_fest.col_values(1):
+            value["points"] += 50.0
 
         moderators[moderator] = value["points"]
 
