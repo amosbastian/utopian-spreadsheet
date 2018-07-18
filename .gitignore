@@ -1,3 +1,4 @@
 client_secret.json
 venv/
 *.json
+*.log

@@ -106,9 +106,10 @@ def main():
             unreviewed.delete_row(result.index(row) + 1)
             reviewed.append_row(row)
 
-            if row[-1] > 0:
+            if float(score) > MINIMUM_SCORE:
                 vote(row[3], row[-1])
             return
 
 if __name__ == '__main__':
     main()
+    print(exponential_vote(90.5, "development"))
