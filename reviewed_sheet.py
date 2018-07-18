@@ -83,7 +83,7 @@ def exponential_vote(score, category):
     return status, f"{vote_pct:.2f}"
 
 
-def vote(url, vote_pct, category):
+def vote(url, vote_pct):
     vote_pct = float(vote_pct) / max(MAX_VOTE.values()) * 100.0
     contribution = Comment(url)
     contribution.vote(vote_pct, "amosbastian")
@@ -107,7 +107,7 @@ def main():
             reviewed.append_row(row)
 
             if float(score) > MINIMUM_SCORE:
-                vote(row[3], row[-1], category)
+                vote(row[3], row[-1])
             return
 
 if __name__ == '__main__':
