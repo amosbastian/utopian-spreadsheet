@@ -147,8 +147,15 @@ def moderator_points():
         except Exception:
             pass
 
-        if moderator not in moderators.keys():
+        if moderator == "banned" or moderator == "moderator":
             continue
+
+        # Moderator not in database!
+        if moderator not in moderators.keys():
+            moderators[moderator] = {
+                "points": 0,
+                "reviewed": 0
+            }
 
         try:
             # Normal contribution
