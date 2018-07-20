@@ -175,8 +175,8 @@ def moderator_points():
         if moderator in community_managers:
             value["points"] += 100.0
 
-            # Check for BOSSPOEM
-            if moderator == "espoem":
+            # Check for BOSSPOEM or TECHSLUT
+            if moderator == "espoem" or moderator == "techslut":
                 value["points"] = 400.0
         else:
             if value["reviewed"] >= 5:
