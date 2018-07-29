@@ -94,19 +94,19 @@ def valid_category(tags):
             return True, "development"
         elif "graphic" in category:
             return True, "graphics"
-        elif "bug" in category or "hunt" in category:
+        elif "bughunt" in category or "bug-hunt" in category:
             return True, "bug-hunting"
-        elif "anal" in category:
+        elif "analysis" in category:
             return True, "analysis"
         elif "visibility" in category or "social" in category:
             return True, "social"
-        elif "video" in category:
+        elif "videotut" in category or "video-tut" in category:
             return True, "video-tutorials"
         elif category == "tutorial" or category == "tutorials":
             return True, "tutorials"
-        elif "copy" in category:
+        elif "copywrit" in category:
             return True, "copywriting"
-        elif "docu" in category:
+        elif "document" in category:
             return True, "documentation"
         elif "translation" in category:
             return True, "translations"
