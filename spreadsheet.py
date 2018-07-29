@@ -254,7 +254,8 @@ def main():
                 banned_comment(steemit_url)
             unreviewed.append_row(row)
             result = get_urls()
-            logger.info(f"Adding {steemit_url} to the spreadsheet.")
+            logger.info(f"{steemit_url} has tags: {tags} and was added to the "
+                        "spreadsheet.")
 
     moderator_points()
 
