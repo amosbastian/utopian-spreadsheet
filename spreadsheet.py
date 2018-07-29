@@ -81,36 +81,36 @@ CATEGORIES = {
 }
 
 
-def valid_category(category):
+def valid_category(tags):
     """Returns True if category is valid, otherwise False"""
-    if "blog" in category or "task" in category:
-        if "bug" in category:
-            return True, "task-bug-hunting"
-        return True, category
-    elif "idea" in category or "suggestion" in category:
-        return True, "ideas"
-    elif "develop" in category:
-        return True, "development"
-    elif "graphic" in category:
-        return True, "graphics"
-    elif "bug" in category or "hunt" in category:
-        return True, "bug-hunting"
-    elif "anal" in category:
-        return True, "analysis"
-    elif "visibility" in category or "social" in category:
-        return True, "social"
-    elif "video" in category:
-        return True, "video-tutorials"
-    elif category == "tutorial" or category == "tutorials":
-        return True, "tutorials"
-    elif "copy" in category:
-        return True, "copywriting"
-    elif "docu" in category:
-        return True, "documentation"
-    elif "translation" in category:
-        return True, "translations"
-    else:
-        return False, ""
+    for category in tags:
+        if "blog" in category or "task" in category:
+            if "bug" in category:
+                return True, "task-bug-hunting"
+            return True, category
+        elif "idea" in category or "suggestion" in category:
+            return True, "ideas"
+        elif "develop" in category:
+            return True, "development"
+        elif "graphic" in category:
+            return True, "graphics"
+        elif "bug" in category or "hunt" in category:
+            return True, "bug-hunting"
+        elif "anal" in category:
+            return True, "analysis"
+        elif "visibility" in category or "social" in category:
+            return True, "social"
+        elif "video" in category:
+            return True, "video-tutorials"
+        elif category == "tutorial" or category == "tutorials":
+            return True, "tutorials"
+        elif "copy" in category:
+            return True, "copywriting"
+        elif "docu" in category:
+            return True, "documentation"
+        elif "translation" in category:
+            return True, "translations"
+    return False, ""
 
 
 def get_repository(post):
@@ -228,13 +228,10 @@ def main():
             tags = post.json_metadata["tags"]
 
             # Checking if valid post
-            if (post.category != "utopian-io" or
-                    len(tags) < 2 or
-                    post["created"].date() < this_week):
+            if (len(tags) < 2 or post["created"].date() < this_week):
                 continue
             else:
-                category = tags[1]
-                is_valid, category = valid_category(category)
+                is_valid, category = valid_category(tags)
                 if not is_valid:
                     logger.error(f"{steemit_url} has tags: {tags} and was not "
                                  "added")
