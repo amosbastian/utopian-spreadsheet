@@ -84,10 +84,12 @@ CATEGORIES = {
 def valid_category(tags):
     """Returns True if category is valid, otherwise False"""
     for category in tags:
-        if "blog" in category or "task" in category:
+        if "task" in category:
             if "bug" in category:
                 return True, "task-bug-hunting"
             return True, category
+        if category == "blog" or category == "blogs":
+            return True, "blog"
         elif "idea" in category or "suggestion" in category:
             return True, "ideas"
         elif "develop" in category:
