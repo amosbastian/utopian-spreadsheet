@@ -101,8 +101,8 @@ def main():
             category = row[4].strip()
             row[-2], row[-1] = exponential_vote(float(score), category)
 
-            logger.info(f"Moving {row[2]} to reviewed sheet with voting %: "
-                        f"{row[-1]}")
+            logger.info(f"Moving {row[2]} to reviewed sheet with voting % "
+                        f"{row[-1]} and score {score}")
             unreviewed.delete_row(result.index(row) + 1)
             reviewed.append_row(row)
 
