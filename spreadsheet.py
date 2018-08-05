@@ -58,7 +58,7 @@ translator_sheet = sheet.worksheet("Translators")
 UTOPIAN_TRANSLATORS = translator_sheet.col_values(1)[1:]
 
 # URL
-URL = "https://steemit.com/utopian-io/"
+URL = "https://steemit.com/"
 
 # MongoDB
 CLIENT = MongoClient()
@@ -224,7 +224,7 @@ def main():
     query = Query(limit=100, tag="utopian-io")
     result = get_urls()
     for post in Discussions_by_created(query):
-        steemit_url = f"{URL}{post.authorperm}"
+        steemit_url = f"{URL}{post.category}/{post.authorperm}"
         if steemit_url not in result:
 
             tags = post.json_metadata["tags"]
