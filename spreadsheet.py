@@ -93,7 +93,7 @@ def valid_category(tags):
             return True, "blog"
         elif "idea" in category or "suggestion" in category:
             return True, "ideas"
-        elif "develop" in category:
+        elif category == "development":
             return True, "development"
         elif category == "graphic" or category == "graphics":
             return True, "graphics"
