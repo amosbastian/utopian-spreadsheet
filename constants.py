@@ -25,7 +25,7 @@ SCOPE = ["https://spreadsheets.google.com/feeds",
 CREDENTIALS = ServiceAccountCredentials.from_json_keyfile_name(
     f"{DIR_PATH}/client_secret.json", SCOPE)
 CLIENT = gspread.authorize(CREDENTIALS)
-SHEET = CLIENT.open("Copy of Utopian Reviews")
+SHEET = CLIENT.open("Utopian Reviews")
 
 # Get date of current, next and previous Thursday
 TODAY = date.today()
