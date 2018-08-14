@@ -1,9 +1,9 @@
 from beem.account import Account
 from beem.comment import Comment
 from contribution import Contribution
+from datetime import datetime
 import constants
 import os
-import time
 
 
 def exponential_vote(score, category):
@@ -71,9 +71,11 @@ def vote_comment(contribution):
 
     for comment in post.get_replies():
         if comment.author == contribution.moderator:
-            wait_time = 1800 - comment.time_elapsed().total_seconds()
-            time.sleep(wait_time)
-            comment.vote(weight, "amosbastian")
+            collection = constants.DB.comments
+            collection.insert({
+                "url": comment.authorperm,
+                "updated": datetime.now()
+            })
 
 
 def main():
