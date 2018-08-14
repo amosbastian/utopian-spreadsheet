@@ -42,9 +42,6 @@ def vote_contribution(contribution):
     contribution = Comment(contribution.url)
     contribution.vote(weight, "amosbastian")
 
-    # 3 seconds for next vote
-    time.sleep(3)
-
 
 def points_to_weight(points):
     """
@@ -74,6 +71,8 @@ def vote_comment(contribution):
 
     for comment in post.get_replies():
         if comment.author == contribution.moderator:
+            wait_time = 1800 - comment.time_elapsed().total_seconds()
+            time.sleep(wait_time)
             comment.vote(weight, "amosbastian")
 
 
