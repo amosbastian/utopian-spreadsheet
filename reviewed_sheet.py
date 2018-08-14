@@ -46,7 +46,9 @@ def main():
             category = contribution.category.strip()
             contribution.vote_status, contribution.weight = exponential_vote(
                 float(score), category)
-            contribution.review_status = "Pending"
+
+            if not contribution.moderator == "BANNED":
+                contribution.review_status = "Pending"
 
             constants.LOGGER.info(
                 f"Moving {contribution.url} to reviewed sheet with voting % "
