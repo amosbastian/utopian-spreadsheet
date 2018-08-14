@@ -1,7 +1,7 @@
 from beem.account import Account
 from beem.comment import Comment
 from contribution import Contribution
-from datetime import datetime
+from datetime import datetime, timedelta
 import constants
 import os
 
@@ -43,38 +43,23 @@ def vote_contribution(contribution):
     contribution.vote(weight, "amosbastian")
 
 
-def points_to_weight(points):
+def add_comment(contribution):
     """
-    Returns the voting weight needed for a vote worth the points equivalence
-    in SBD.
-    """
-    account = Account("utopian-io")
-    max_SBD = account.get_voting_value_SBD()
-    return 100 * points / max_SBD
-
-
-def vote_comment(contribution):
-    """
-    Votes on the contribution's moderator's comment.
+    Adds the authorperm of the moderator's comment to the database.
     """
     if contribution.moderator == "amosbastian":
         return
 
-    try:
-        points = constants.CATEGORY_POINTS[contribution.category]
-    except KeyError:
-        points = constants.TASK_REQUEST
-
-    category_weight = points_to_weight(points)
-    weight = category_weight / max(constants.MAX_VOTE.values()) * 100.0
     post = Comment(contribution.url)
 
     for comment in post.get_replies():
         if comment.author == contribution.moderator:
+            age = comment.time_elapsed()
             collection = constants.DB.comments
             collection.insert({
                 "url": comment.authorperm,
-                "updated": datetime.now()
+                "upvote_time": datetime.now() + timedelta(minutes=30) - age,
+                "category": contribution.category
             })
 
 
@@ -104,7 +89,7 @@ def main():
 
             if float(score) > constants.MINIMUM_SCORE:
                 vote_contribution(contribution)
-                vote_comment(contribution)
+                add_comment(contribution)
             return
 
 if __name__ == '__main__':
