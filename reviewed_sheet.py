@@ -1,3 +1,4 @@
+from beem.account import Account
 from beem.comment import Comment
 from contribution import Contribution
 import constants
@@ -45,6 +46,16 @@ def vote_contribution(contribution):
     time.sleep(3)
 
 
+def points_to_weight(points):
+    """
+    Returns the voting weight needed for a vote worth the points equivalence
+    in SBD.
+    """
+    account = Account("utopian-io")
+    max_SBD = account.get_voting_value_SBD()
+    return 100 * points / max_SBD
+
+
 def vote_comment(contribution):
     """
     Votes on the contribution's moderator's comment.
@@ -53,10 +64,11 @@ def vote_comment(contribution):
         return
 
     try:
-        category_weight = constants.CATEGORY_POINTS[contribution.category]
+        points = constants.CATEGORY_POINTS[contribution.category]
     except KeyError:
-        category_weight = constants.TASK_REQUEST
+        points = constants.TASK_REQUEST
 
+    category_weight = points_to_weight(points)
     weight = category_weight / max(constants.MAX_VOTE.values()) * 100.0
     post = Comment(contribution.url)
 
