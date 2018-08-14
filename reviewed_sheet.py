@@ -2,6 +2,7 @@ from beem.comment import Comment
 from contribution import Contribution
 import constants
 import os
+import time
 
 
 def exponential_vote(score, category):
@@ -27,20 +28,26 @@ def exponential_vote(score, category):
     return status, f"{weight:.2f}"
 
 
-def vote_contribution(url, weight):
+def vote_contribution(contribution):
     """
     Votes on the contribution with a scaled weight (dependent on the
     contribution's category and weight).
     """
-    weight = float(weight) / max(constants.MAX_VOTE.values()) * 100.0
-    contribution = Comment(url)
+    if contribution.author == "amosbastian":
+        return
+    weight = (float(contribution.weight) /
+              max(constants.MAX_VOTE.values()) * 100.0)
+    contribution = Comment(contribution.url)
     contribution.vote(weight, "amosbastian")
+    time.sleep(3)
 
 
 def vote_comment(contribution):
     """
     Votes on the contribution's moderator's comment.
     """
+    if contribution.moderator == "amosbastian":
+        return
     try:
         category_weight = constants.CATEGORY_POINTS[contribution.category]
     except KeyError:
@@ -79,7 +86,8 @@ def main():
             constants.REVIEWED.append_row(list(contribution.__dict__.values()))
 
             if float(score) > constants.MINIMUM_SCORE:
-                vote_contribution(contribution.url, contribution.weight)
+                vote_contribution(contribution)
+                vote_comment(contribution)
             return
 
 if __name__ == '__main__':
