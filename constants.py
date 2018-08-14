@@ -69,19 +69,20 @@ DB = CLIENT.utopian
 
 # Points per category
 CATEGORY_POINTS = {
-    "ideas": 2.0,
-    "development": 4.25,
-    "graphics": 3.0,
-    "bug-hunting": 3.25,
-    "analysis": 3.25,
-    "social": 2.0,
-    "video-tutorials": 4.0,
-    "tutorials": 4.0,
-    "copywriting": 2.0,
-    "documentation": 2.25,
-    "blog": 2.25,
-    "translations": 4.0
+    "ideas": 6.0,
+    "development": 10.0,
+    "graphics": 8.0,
+    "bug-hunting": 7.0,
+    "analysis": 8.0,
+    "social": 5.0,
+    "video-tutorials": 8.0,
+    "tutorials": 8.0,
+    "copywriting": 5.0,
+    "documentation": 5.0,
+    "blog": 6.0,
+    "translations": 8.0
 }
+TASK_REQUEST = 2.5
 
 # Text
 COMMENT_BANNED = (
