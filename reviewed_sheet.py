@@ -27,10 +27,31 @@ def exponential_vote(score, category):
     return status, f"{weight:.2f}"
 
 
-def vote(url, weight):
+def vote_contribution(url, weight):
+    """
+    Votes on the contribution with a scaled weight (dependent on the
+    contribution's category and weight).
+    """
     weight = float(weight) / max(constants.MAX_VOTE.values()) * 100.0
     contribution = Comment(url)
     contribution.vote(weight, "amosbastian")
+
+
+def vote_comment(contribution):
+    """
+    Votes on the contribution's moderator's comment.
+    """
+    try:
+        category_weight = constants.CATEGORY_POINTS[contribution.category]
+    except KeyError:
+        category_weight = constants.TASK_REQUEST
+
+    weight = category_weight / max(constants.MAX_VOTE.values()) * 100.0
+    post = Comment(contribution.url)
+
+    for comment in post.get_replies():
+        if comment.author == contribution.moderator:
+            comment.vote(weight, "amosbastian")
 
 
 def main():
@@ -58,7 +79,7 @@ def main():
             constants.REVIEWED.append_row(list(contribution.__dict__.values()))
 
             if float(score) > constants.MINIMUM_SCORE:
-                vote(contribution.url, contribution.weight)
+                vote_contribution(contribution.url, contribution.weight)
             return
 
 if __name__ == '__main__':
