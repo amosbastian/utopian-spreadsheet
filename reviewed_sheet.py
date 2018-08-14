@@ -33,12 +33,15 @@ def vote_contribution(contribution):
     Votes on the contribution with a scaled weight (dependent on the
     contribution's category and weight).
     """
-    if contribution.author == "amosbastian":
+    if "@amosbastian" in contribution.url:
         return
+
     weight = (float(contribution.weight) /
               max(constants.MAX_VOTE.values()) * 100.0)
     contribution = Comment(contribution.url)
     contribution.vote(weight, "amosbastian")
+
+    # 3 seconds for next vote
     time.sleep(3)
 
 
@@ -48,6 +51,7 @@ def vote_comment(contribution):
     """
     if contribution.moderator == "amosbastian":
         return
+
     try:
         category_weight = constants.CATEGORY_POINTS[contribution.category]
     except KeyError:
