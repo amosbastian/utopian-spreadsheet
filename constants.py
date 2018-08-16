@@ -33,15 +33,28 @@ OFFSET = (TODAY.weekday() - 3) % 7
 THIS_WEEK = TODAY - timedelta(days=OFFSET)
 LAST_WEEK = THIS_WEEK - timedelta(days=7)
 NEXT_WEEK = THIS_WEEK + timedelta(days=7)
+TWO_WEEK = THIS_WEEK - timedelta(days=14)
 
 # Get title's of most recent two worksheets
+TITLE_REVIEWED_EDGE = f"Reviewed - {TWO_WEEK:%b %-d} - {LAST_WEEK:%b %-d}"
+TITLE_UNREVIEWED_EDGE = f"Unreviewed - {LAST_WEEK:%b %-d} - {THIS_WEEK:%b %-d}"
 TITLE_PREVIOUS = f"Reviewed - {LAST_WEEK:%b %-d} - {THIS_WEEK:%b %-d}"
 TITLE_CURRENT = f"Reviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
+TITLE_UNREVIEWED = f"Unreviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
+
+try:
+    PREVIOUS_REVIEWED = SHEET.worksheet(TITLE_PREVIOUS)
+    CURRENT_REVIEWED = SHEET.worksheet(TITLE_CURRENT)
+    UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED)
+except:
+    PREVIOUS_REVIEWED = SHEET.worksheet(TITLE_REVIEWED_EDGE)
+    CURRENT_REVIEWED = SHEET.worksheet(TITLE_PREVIOUS)
+    UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED_EDGE)
+
 PREVIOUS_REVIEWED = SHEET.worksheet(TITLE_PREVIOUS)
 CURRENT_REVIEWED = SHEET.worksheet(TITLE_CURRENT)
 
 # Use title to select worksheet
-TITLE_UNREVIEWED = f"Unreviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
 TITLE_REVIEWED = f"Reviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
 TITLE_LAST = f"Reviewed - {LAST_WEEK:%b %-d} - {THIS_WEEK:%b %-d}"
 
