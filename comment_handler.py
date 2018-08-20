@@ -39,11 +39,12 @@ def main():
     comments = constants.DB.comments.find({
         "upvote_time": {
             "$lte": datetime.now()
-        }
+        },
+        "upvoted": False
     })
     for comment in comments:
         upvote_comment(comment)
-        constants.DB.comments.remove(comment)
+        constants.DB.comments.update_one(comment, {"$set": {"upvoted": True}})
 
 if __name__ == '__main__':
     main()

@@ -59,6 +59,8 @@ def add_comment(contribution):
             collection.insert({
                 "url": comment.authorperm,
                 "upvote_time": datetime.now() + timedelta(minutes=30) - age,
+                "inserted": datetime.now(),
+                "upvoted": False,
                 "category": contribution.category
             })
 
