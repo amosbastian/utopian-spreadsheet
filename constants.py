@@ -41,8 +41,15 @@ TITLE_UNREVIEWED_EDGE = f"Unreviewed - {LAST_WEEK:%b %-d} - {THIS_WEEK:%b %-d}"
 TITLE_PREVIOUS = f"Reviewed - {LAST_WEEK:%b %-d} - {THIS_WEEK:%b %-d}"
 TITLE_CURRENT = f"Reviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
 TITLE_UNREVIEWED = f"Unreviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
+TITLE_REVIEWED = f"Reviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
+TITLE_LAST = f"Reviewed - {LAST_WEEK:%b %-d} - {THIS_WEEK:%b %-d}"
 
 try:
+    # Get all relevant worksheets
+    UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED)
+    REVIEWED = SHEET.worksheet(TITLE_REVIEWED)
+    LAST = SHEET.worksheet(TITLE_LAST)
+    UTOPIAN_FEST = SHEET.worksheet("Utopian Fest")
     PREVIOUS_REVIEWED = SHEET.worksheet(TITLE_PREVIOUS)
     CURRENT_REVIEWED = SHEET.worksheet(TITLE_CURRENT)
     UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED)
@@ -50,19 +57,6 @@ except:
     PREVIOUS_REVIEWED = SHEET.worksheet(TITLE_REVIEWED_EDGE)
     CURRENT_REVIEWED = SHEET.worksheet(TITLE_PREVIOUS)
     UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED_EDGE)
-
-PREVIOUS_REVIEWED = SHEET.worksheet(TITLE_PREVIOUS)
-CURRENT_REVIEWED = SHEET.worksheet(TITLE_CURRENT)
-
-# Use title to select worksheet
-TITLE_REVIEWED = f"Reviewed - {THIS_WEEK:%b %-d} - {NEXT_WEEK:%b %-d}"
-TITLE_LAST = f"Reviewed - {LAST_WEEK:%b %-d} - {THIS_WEEK:%b %-d}"
-
-# Get all relevant worksheets
-UNREVIEWED = SHEET.worksheet(TITLE_UNREVIEWED)
-REVIEWED = SHEET.worksheet(TITLE_REVIEWED)
-LAST = SHEET.worksheet(TITLE_LAST)
-UTOPIAN_FEST = SHEET.worksheet("Utopian Fest")
 
 # Get all relevant URLs
 BANNED_SHEET = SHEET.worksheet("Banned users")
