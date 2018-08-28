@@ -67,6 +67,18 @@ def add_comment(contribution):
             })
 
 
+def move_to_reviewed(contribution):
+    """Move contribution to the reviewed worksheet."""
+    post = Comment(contribution.url)
+    tags = post.json_metadata["tags"]
+
+    if "iamutopian" in tags:
+        contribution.category = "iamutopian"
+        contribution.vote_status = ""
+
+    constants.REVIEWED.append_row(list(contribution.__dict__.values()))
+
+
 def main():
     result = constants.UNREVIEWED.get_all_values()
     for row in result[1:]:
@@ -81,7 +93,7 @@ def main():
             contribution.vote_status, contribution.weight = exponential_vote(
                 float(score), category)
 
-            if not contribution.moderator == "BANNED":
+            if not moderator.upper() in ["BANNED", "IGNORED", "IRRELEVANT"]:
                 contribution.review_status = "Pending"
 
             constants.LOGGER.info(
@@ -89,7 +101,7 @@ def main():
                 f"{contribution.weight} and score {score}")
 
             constants.UNREVIEWED.delete_row(result.index(row) + 1)
-            constants.REVIEWED.append_row(list(contribution.__dict__.values()))
+            move_to_reviewed(contribution)
 
             if float(score) > constants.MINIMUM_SCORE:
                 vote_contribution(contribution)
