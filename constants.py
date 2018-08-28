@@ -100,20 +100,20 @@ COMMENT_BANNED = (
 
 # Max vote
 MAX_VOTE = {
-    "ideas": 20.0,
-    "development": 55.0,
-    "bug-hunting": 13.0,
-    "translations": 35.0,
-    "graphics": 40.0,
-    "analysis": 45.0,
-    "social": 30.0,
-    "documentation": 30.0,
-    "tutorials": 30.0,
-    "video-tutorials": 35.0,
-    "copywriting": 30.0,
-    "blog": 30.0,
+    "ideas": 30.0,
+    "development": 70.0,
+    "bug-hunting": 20.0,
+    "translations": 55.0,
+    "graphics": 60.0,
+    "analysis": 65.0,
+    "social": 40.0,
+    "documentation": 40.0,
+    "tutorials": 40.0,
+    "video-tutorials": 55.0,
+    "copywriting": 40.0,
+    "blog": 40.0,
 }
-MAX_TASK_REQUEST = 6.0
+MAX_TASK_REQUEST = 10.0
 
 # Minimum score
 MINIMUM_SCORE = 10
