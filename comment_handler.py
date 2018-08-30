@@ -42,7 +42,7 @@ def check_missed_comments():
         post = Comment(url)
         for comment in post.get_replies():
             if comment.author == moderator:
-                missed_posts.remove({"url": url})
+                constants.DB.missed_posts.remove({"url": url})
                 age = comment.time_elapsed()
                 comments = constants.DB.comments
                 now = datetime.now()
@@ -53,7 +53,6 @@ def check_missed_comments():
                     "upvoted": False,
                     "category": category
                 })
-
 
 
 def main():
