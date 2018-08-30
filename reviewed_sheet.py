@@ -105,7 +105,8 @@ def main():
             contribution.vote_status, contribution.weight = exponential_vote(
                 float(score), category)
 
-            if not moderator.upper() in ["BANNED", "IGNORED", "IRRELEVANT"]:
+            if not moderator.upper() in ["BANNED", "IGNORED", "IGNORE",
+                                         "IRRELEVANT"]:
                 contribution.review_status = "Pending"
 
             constants.LOGGER.info(
