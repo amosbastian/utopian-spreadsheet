@@ -1,6 +1,6 @@
 from beem.account import Account
 from beem.comment import Comment
-from datetime import datetime
+from datetime import datetime, timedelta
 import constants
 import time
 
@@ -48,7 +48,7 @@ def check_missed_comments():
                 now = datetime.now()
                 comments.insert({
                     "url": comment.authorperm,
-                    "upvote_time": now + timedelta(minutes=30) - age,
+                    "upvote_time": now + timedelta(minutes=25) - age,
                     "inserted": now,
                     "upvoted": False,
                     "category": category
