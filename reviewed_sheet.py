@@ -4,6 +4,7 @@ from contribution import Contribution
 from datetime import datetime, timedelta
 import constants
 import os
+import requests
 
 
 def exponential_vote(score, category):
@@ -54,6 +55,7 @@ def add_comment(contribution):
 
     post = Comment(contribution.url)
 
+    inserted = False
     for comment in post.get_replies():
         if comment.author == contribution.moderator:
             age = comment.time_elapsed()
@@ -65,16 +67,26 @@ def add_comment(contribution):
                 "upvoted": False,
                 "category": contribution.category
             })
+            inserted = True
+
+    if not inserted:
+        collection = constants.DB.missed_posts
+        collection.insert({
+            "url": contribution.url,
+            "moderator": contribution.moderator,
+            "category": contribution.category
+        })
 
 
 def move_to_reviewed(contribution):
     """Move contribution to the reviewed worksheet."""
-    post = Comment(contribution.url)
-    tags = post.json_metadata["tags"]
+    if contribution.category == "blog":
+        post = Comment(contribution.url)
+        tags = post.json_metadata["tags"]
 
-    if "iamutopian" in tags:
-        contribution.category = "iamutopian"
-        contribution.vote_status = ""
+        if "iamutopian" in tags:
+            contribution.category = "iamutopian"
+            contribution.vote_status = ""
 
     constants.REVIEWED.append_row(list(contribution.__dict__.values()))
 

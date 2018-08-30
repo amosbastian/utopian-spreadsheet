@@ -73,6 +73,7 @@ STEEMIT_URL = "https://steemit.com/"
 # MongoDB
 CLIENT = MongoClient()
 DB = CLIENT.utopian
+DB_UTEMPIAN = CLIENT.utempian
 
 # Points per category
 CATEGORY_POINTS = {

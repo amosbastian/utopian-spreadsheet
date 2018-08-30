@@ -32,6 +32,30 @@ def upvote_comment(comment):
     time.sleep(3)
 
 
+def check_missed_comments():
+    missed_posts = constants.DB.missed_posts.find()
+    for document in missed_posts:
+        url = document["url"]
+        moderator = document["moderator"]
+        category = document["category"]
+
+        post = Comment(url)
+        for comment in post.get_replies():
+            if comment.author == moderator:
+                missed_posts.remove({"url": url})
+                age = comment.time_elapsed()
+                comments = constants.DB.comments
+                now = datetime.now()
+                comments.insert({
+                    "url": comment.authorperm,
+                    "upvote_time": now + timedelta(minutes=30) - age,
+                    "inserted": now,
+                    "upvoted": False,
+                    "category": category
+                })
+
+
+
 def main():
     """
     Upvotes all comments that are older than 30 minutes and then removes them.
@@ -45,6 +69,8 @@ def main():
     for comment in comments:
         upvote_comment(comment)
         constants.DB.comments.update_one(comment, {"$set": {"upvoted": True}})
+
+    check_missed_comments()
 
 if __name__ == '__main__':
     main()

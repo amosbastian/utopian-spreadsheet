@@ -121,6 +121,8 @@ def main():
     """
     query = Query(limit=100, tag="utopian-io")
     result = get_urls()
+    moderators = [moderator["account"] for moderator
+                  in constants.DB_UTEMPIAN.moderators.find()]
     for post in Discussions_by_created(query):
         steemit_url = (
             f"{constants.STEEMIT_URL}{post.category}/{post.authorperm}")
@@ -151,6 +153,10 @@ def main():
                 constants.LOGGER.info(
                     f"Commenting on {steemit_url} - BANNED.")
                 banned_comment(steemit_url)
+
+            if "iamutopian" in tags and post.author not in moderators:
+                continue
+
             constants.UNREVIEWED.append_row(row)
             result = get_urls()
             constants.LOGGER.info(
