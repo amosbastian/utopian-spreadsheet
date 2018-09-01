@@ -94,7 +94,7 @@ TASK_REQUEST = 2.5
 
 # Text
 COMMENT_BANNED = (
-    "Hi, @{}. Your account has been excluded from the Utopian rewarding "
+    "Hi, @{}. Your account has been excluded from Utopian rewards "
     "and therefore this contribution post will not be reviewed. You can "
     "contact us at https://support.utopian.io/ if you have any further "
     "questions.")
