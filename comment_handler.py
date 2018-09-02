@@ -97,8 +97,9 @@ def main():
     })
     for contribution in contributions:
         upvote_contribution(contribution)
-        constants.DB_UTEMPIAN.pending_contributions(
+        constants.DB_UTEMPIAN.pending_contributions.update_one(
             contribution, {"$set": {"upvoted": True}})
 
 if __name__ == '__main__':
     main()
+
