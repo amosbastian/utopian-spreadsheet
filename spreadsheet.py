@@ -1,6 +1,6 @@
 from beem.discussions import Query, Discussions_by_created
 from beem.comment import Comment
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from oauth2client.service_account import ServiceAccountCredentials
 from urllib.parse import urlparse
 
@@ -114,10 +114,64 @@ def banned_comment(url):
     post.reply(comment, author="amosbastian")
 
 
+def exponential_vote(score, category):
+    """Calculates the exponential vote for the bot."""
+    status = ""
+
+    try:
+        max_vote = constants.MAX_VOTE[category]
+    except:
+        max_vote = constants.MAX_TASK_REQUEST
+
+    else:
+        power = constants.EXP_POWER
+        weight = pow(
+            score / 100.0,
+            power - (score / 100.0 * (power - 1.0))) * max_vote
+
+    return float(weight)
+
+
+def percentage(part, whole):
+    return 100 * float(part) / float(whole)
+
+
+def store_contribution(post, category):
+    """Stores a contribution in database for voting."""
+    contributions = constants.DB_UTEMPIAN.contributions.find(
+        {"author": post.author, "category": category})
+
+    scores = [contribution["score"] for contribution in contributions
+              if contribution["score"]]
+
+    if not scores:
+        return
+
+    rejected = scores.count(0)
+    accepted = len(scores) - rejected
+    upvote_percentage = percentage(accepted, len(scores))
+
+    if upvote_percentage < 66.0:
+        return
+
+    average_score = sum(scores) / len(scores)
+    weight = exponential_vote(average_score, category)
+    new_weight = weight / max(constants.MAX_VOTE.values()) * 100.0
+
+    collection = constants.DB_UTEMPIAN.pending_contributions
+    age = post.time_elapsed()
+    collection.insert({
+        "url": post.authorperm,
+        "upvote_time": datetime.now() + timedelta(minutes=30) - age,
+        "inserted": datetime.now(),
+        "upvoted": False,
+        "weight": new_weight
+    })
+
+
 def main():
-    """
-    Iterates over the most recently created contributions and adds them to the
-    spreadsheet if not already in there.
+    """Iterates over the most recently created contributions and adds them to
+    the spreadsheet if not already in there.
     """
     query = Query(limit=100, tag="utopian-io")
     result = get_urls()
@@ -162,12 +216,10 @@ def main():
             result = get_urls()
             constants.LOGGER.info(
                 f"{steemit_url} has tags: {tags} and was added.")
+            store_contribution(post, category)
 
     moderator_points()
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except Exception as error:
-        constants.LOGGER.error(error)
+    main()

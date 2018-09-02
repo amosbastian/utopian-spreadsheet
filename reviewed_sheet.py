@@ -8,9 +8,7 @@ import requests
 
 
 def exponential_vote(score, category):
-    """
-    Calculates the exponential vote for the bot.
-    """
+    """Calculates the exponential vote for the bot."""
     status = ""
 
     try:
@@ -31,8 +29,7 @@ def exponential_vote(score, category):
 
 
 def vote_contribution(contribution):
-    """
-    Votes on the contribution with a scaled weight (dependent on the
+    """Votes on the contribution with a scaled weight (dependent on the
     contribution's category and weight).
     """
     if "@amosbastian" in contribution.url:
@@ -47,9 +44,7 @@ def vote_contribution(contribution):
 
 
 def add_comment(contribution):
-    """
-    Adds the authorperm of the moderator's comment to the database.
-    """
+    """Adds the authorperm of the moderator's comment to the database."""
     if contribution.moderator == "amosbastian":
         return
 
