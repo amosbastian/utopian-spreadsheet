@@ -62,6 +62,10 @@ except:
 BANNED_SHEET = SHEET.worksheet("Banned users")
 BANNED_USERS = zip(BANNED_SHEET.col_values(1), BANNED_SHEET.col_values(4))
 
+# VIPO sheet
+VIPO_SHEET = SHEET.worksheet("VIPO")
+VIPO = [vipo.strip() for vipo in VIPO_SHEET.col_values(1)[1:]]
+
 # Get all translators
 TRANSLATOR_SHEET = SHEET.worksheet("Translators")
 UTOPIAN_TRANSLATORS = [translator.strip() for

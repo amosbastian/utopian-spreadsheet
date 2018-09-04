@@ -7,7 +7,7 @@ import os
 import requests
 
 
-def exponential_vote(score, category):
+def exponential_vote(score, category, vipo=False):
     """Calculates the exponential vote for the bot."""
     status = ""
 
@@ -15,6 +15,9 @@ def exponential_vote(score, category):
         max_vote = constants.MAX_VOTE[category]
     except:
         max_vote = constants.MAX_TASK_REQUEST
+
+    if vipo:
+        max_vote *= 1.2
 
     if score < constants.MINIMUM_SCORE:
         weight = 0.0
@@ -88,6 +91,9 @@ def move_to_reviewed(contribution):
 
 def main():
     result = constants.UNREVIEWED.get_all_values()
+    vipo = constants.VIPO
+    is_vipo = False
+
     for row in result[1:]:
         contribution = Contribution(row)
         moderator = contribution.moderator
@@ -95,10 +101,14 @@ def main():
         score = contribution.score
 
         if moderator != "" and date != "" and score != "":
+            post = Comment(contribution.url)
             # Calculate voting %
+            if post.author in vipo:
+                is_vipo = True
+
             category = contribution.category.strip()
             contribution.vote_status, contribution.weight = exponential_vote(
-                float(score), category)
+                float(score), category, is_vipo)
 
             if not moderator.upper() in ["BANNED", "IGNORED", "IGNORE",
                                          "IRRELEVANT"]:
