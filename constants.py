@@ -127,4 +127,4 @@ MINIMUM_SCORE = 10
 EXP_POWER = 2.1
 
 # GitHub
-REPOSITORY_REGEX = "http(s)?://github.com/[a-zA-Z0-9]*/[a-zA-Z0-9]*"
+REPOSITORY_REGEX = "http(s)?://github.com/\S*/\S*"
