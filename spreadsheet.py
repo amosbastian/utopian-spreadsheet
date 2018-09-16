@@ -9,6 +9,7 @@ import gspread
 import json
 import logging
 import os
+import re
 
 
 def valid_category(tags):
@@ -51,15 +52,17 @@ def get_repository(post):
     """
     Returns the first repository found in the given post.
     """
-    url = "github.com/"
-    try:
-        for link in post.json_metadata["links"]:
-            if url in link:
-                if link.startswith("/exit?url="):
-                    link = link[len("/exit?url="):]
-                return link
-    except KeyError:
-        pass
+    pattern = re.compile(constants.REPOSITORY_REGEX)
+    for link in post.json_metadata["links"]:
+        if link.startswith("/exit?url="):
+            link = link[len("/exit?url="):]
+        if pattern.match(link):
+            return link
+    else:
+        for line in post.body.split():
+            if pattern.match(line):
+                return line
+
     return ""
 
 
