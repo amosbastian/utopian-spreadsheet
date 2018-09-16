@@ -202,7 +202,7 @@ def main():
             if (post.author, "Yes") not in constants.BANNED_USERS:
                 row = ["", "", steemit_url, repository, category]
             else:
-                today = date.today()
+                today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 row = ["BANNED", str(today), steemit_url, repository, category,
                        "0", "", "", "", "", 0]
                 constants.LOGGER.info(

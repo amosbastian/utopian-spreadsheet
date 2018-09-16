@@ -97,16 +97,17 @@ def main():
     for row in result[1:]:
         contribution = Contribution(row)
         moderator = contribution.moderator
-        date = contribution.review_date
         score = contribution.score
 
-        if moderator != "" and date != "" and score != "":
+        if moderator != "" and score != "":
             post = Comment(contribution.url)
             # Calculate voting %
             if post.author in vipo:
                 is_vipo = True
 
             category = contribution.category.strip()
+            today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            contribution.review_date = today
             contribution.vote_status, contribution.weight = exponential_vote(
                 float(score), category, is_vipo)
 
