@@ -76,10 +76,9 @@ def add_comment(contribution):
         })
 
 
-def move_to_reviewed(contribution):
+def move_to_reviewed(contribution, post):
     """Move contribution to the reviewed worksheet."""
     if contribution.category == "blog":
-        post = Comment(contribution.url)
         tags = post.json_metadata["tags"]
 
         if "iamutopian" in tags:
@@ -94,14 +93,25 @@ def main():
     vipo = constants.VIPO
     is_vipo = False
 
+    already_voted_on = [contribution["url"] for contribution in
+                        constants.DB_UTEMPIAN.contributions.find({
+                            "status": "unreviewed",
+                            "voted_on": True
+                        })]
+
     for row in result[1:]:
         contribution = Contribution(row)
         moderator = contribution.moderator
         score = contribution.score
 
-        if moderator != "" and score != "":
+        if ((moderator != "" and score != "") or
+                contribution.url in already_voted_on):
+
             post = Comment(contribution.url)
-            # Calculate voting %
+            if contribution.url in already_voted_on:
+                move_to_reviewed(contribution, post)
+                continue
+
             if post.author in vipo:
                 is_vipo = True
 
@@ -120,7 +130,7 @@ def main():
                 f"{contribution.weight} and score {score}")
 
             constants.UNREVIEWED.delete_row(result.index(row) + 1)
-            move_to_reviewed(contribution)
+            move_to_reviewed(contribution, post)
 
             if float(score) > constants.MINIMUM_SCORE:
                 vote_contribution(contribution)
