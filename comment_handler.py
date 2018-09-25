@@ -66,7 +66,7 @@ def check_missed_comments():
                 now = datetime.now()
                 comments.insert({
                     "url": comment.authorperm,
-                    "upvote_time": now + timedelta(minutes=25) - age,
+                    "upvote_time": now + timedelta(minutes=10) - age,
                     "inserted": now,
                     "upvoted": False,
                     "category": category

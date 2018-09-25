@@ -165,7 +165,7 @@ def store_contribution(post, category):
     age = post.time_elapsed()
     collection.insert({
         "url": post.authorperm,
-        "upvote_time": datetime.now() + timedelta(minutes=30) - age,
+        "upvote_time": datetime.now() + timedelta(minutes=10) - age,
         "inserted": datetime.now(),
         "upvoted": False,
         "weight": new_weight
