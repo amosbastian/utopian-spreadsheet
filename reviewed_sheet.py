@@ -39,7 +39,7 @@ def vote_contribution(contribution):
         return
 
     weight = (float(contribution.weight) /
-              max(constants.MAX_VOTE.values()) * 100.0)
+              max(constants.MAX_VOTE.values()) * 10.0)
     contribution = Comment(contribution.url)
     voters = [vote.voter for vote in contribution.get_votes()]
     if "amosbastian" not in voters:
