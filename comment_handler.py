@@ -11,7 +11,7 @@ def points_to_weight(points):
     """
     account = Account("utopian-io")
     max_SBD = account.get_voting_value_SBD()
-    return max(1.0, 10 * points / max_SBD)
+    return max(1.0, 100.0 * points / max_SBD)
 
 
 def upvote_comment(comment):

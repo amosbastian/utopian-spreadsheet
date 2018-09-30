@@ -3,3 +3,5 @@ venv/
 *.json
 *.log
 __pycache__/
+utilities/
+benchmark.py
