@@ -106,9 +106,11 @@ def main():
 
         if ((moderator != "" and score != "") or
                 contribution.url in already_voted_on):
-
+            today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            contribution.review_date = today
             post = Comment(contribution.url)
             if contribution.url in already_voted_on:
+                constants.UNREVIEWED.delete_row(result.index(row) + 1)
                 move_to_reviewed(contribution, post)
                 continue
 
@@ -116,8 +118,6 @@ def main():
                 is_vipo = True
 
             category = contribution.category.strip()
-            today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            contribution.review_date = today
             contribution.vote_status, contribution.weight = exponential_vote(
                 float(score), category, is_vipo)
 
