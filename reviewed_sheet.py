@@ -110,6 +110,7 @@ def main():
             contribution.review_date = today
             post = Comment(contribution.url)
             if contribution.url in already_voted_on:
+                contribution.moderator = "IGNORE"
                 contribution.score = 0
                 contribution.weight = 0
                 constants.UNREVIEWED.delete_row(result.index(row) + 1)
