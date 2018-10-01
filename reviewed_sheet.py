@@ -109,6 +109,7 @@ def main():
 
             post = Comment(contribution.url)
             if contribution.url in already_voted_on:
+                constants.UNREVIEWED.delete_row(result.index(row) + 1)
                 move_to_reviewed(contribution, post)
                 continue
 
