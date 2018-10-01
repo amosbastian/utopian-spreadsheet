@@ -53,11 +53,12 @@ def get_repository(post):
     Returns the first repository found in the given post.
     """
     pattern = re.compile(constants.REPOSITORY_REGEX)
-    for link in post.json_metadata["links"]:
-        if link.startswith("/exit?url="):
-            link = link[len("/exit?url="):]
-        if pattern.match(link):
-            return link
+    if "links" in post.json_metadata.keys():
+        for link in post.json_metadata["links"]:
+            if link.startswith("/exit?url="):
+                link = link[len("/exit?url="):]
+            if pattern.match(link):
+                return link
     else:
         for line in post.body.split():
             if pattern.match(line):
