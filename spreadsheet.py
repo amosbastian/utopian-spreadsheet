@@ -45,6 +45,8 @@ def valid_category(tags):
             return True, "documentation"
         elif "translation" in category:
             return True, "translations"
+        elif "antiabuse" or "anti-abuse" in category:
+            return True, "anti-abuse"
     return False, ""
 
 
@@ -199,6 +201,12 @@ def main():
                       post.author not in constants.UTOPIAN_TRANSLATORS):
                     constants.LOGGER.error(
                         f"{steemit_url} not made by accepted translator!")
+                    continue
+                elif (category == "anti-abuse" and
+                      post.author not in constants.UTOPIAN_ANTI_ABUSE):
+                    constants.LOGGER.error(
+                        f"{steemit_url} not made by accepted anti-abuse "
+                        "contributor!")
                     continue
             repository = get_repository(post)
 

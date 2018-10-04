@@ -92,7 +92,8 @@ CATEGORY_POINTS = {
     "copywriting": 5.0,
     "documentation": 5.0,
     "blog": 6.0,
-    "translations": 8.0
+    "translations": 8.0,
+    "anti-abuse": 6.0,
 }
 TASK_REQUEST = 2.5
 
@@ -117,6 +118,7 @@ MAX_VOTE = {
     "video-tutorials": 35.0,
     "copywriting": 30.0,
     "blog": 30.0,
+    "anti-abuse": 50.0,
 }
 MAX_TASK_REQUEST = 6.0
 
@@ -128,3 +130,8 @@ EXP_POWER = 2.1
 
 # GitHub
 REPOSITORY_REGEX = "http(s)?://github.com/\S*/\S*"
+
+# Anti abuse
+ANTI_ABUSE_SHEET = SHEET.worksheet("Antiabuse")
+UTOPIAN_ANTI_ABUSE = [antiabuse.strip() for
+                      antiabuse in ANTI_ABUSE_SHEET.col_values(1)[1:]]
