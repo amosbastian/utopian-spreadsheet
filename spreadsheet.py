@@ -162,7 +162,7 @@ def store_contribution(post, category):
 
     average_score = sum(scores) / len(scores)
     weight = exponential_vote(average_score, category)
-    new_weight = (weight / max(constants.MAX_VOTE.values()) * 100.0) / 2.0
+    new_weight = (weight / max(constants.MAX_VOTE.values()) * 100.0)
 
     collection = constants.DB_UTEMPIAN.pending_contributions
     age = post.time_elapsed()

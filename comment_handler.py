@@ -22,7 +22,7 @@ def upvote_comment(comment):
         points = constants.TASK_REQUEST
 
     category_weight = points_to_weight(points)
-    weight = (category_weight / max(constants.MAX_VOTE.values()) * 100.0) / 2.0
+    weight = (category_weight / max(constants.MAX_VOTE.values()) * 100.0)
 
     comment = Comment(comment["url"])
     voters = [vote.voter for vote in comment.get_votes()]
