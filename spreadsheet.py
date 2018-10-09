@@ -45,7 +45,7 @@ def valid_category(tags):
             return True, "documentation"
         elif "translation" in category:
             return True, "translations"
-        elif "antiabuse" or "anti-abuse" in category:
+        elif category == "antiabuse" or category == "anti-abuse":
             return True, "anti-abuse"
     return False, ""
 
