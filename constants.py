@@ -135,3 +135,6 @@ REPOSITORY_REGEX = "http(s)?://github.com/\S*/\S*"
 ANTI_ABUSE_SHEET = SHEET.worksheet("Antiabuse")
 UTOPIAN_ANTI_ABUSE = [antiabuse.strip() for
                       antiabuse in ANTI_ABUSE_SHEET.col_values(1)[1:]]
+
+# Scaling my personal voting weight
+SCALER = 1.5
