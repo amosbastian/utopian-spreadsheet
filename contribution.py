@@ -1,6 +1,6 @@
 class Contribution():
     def __init__(self, row):
-        self.moderator = row[0]
+        self.moderator = row[0].strip()
         self.review_date = row[1]
         self.url = row[2]
         self.repository = row[3]
