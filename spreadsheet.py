@@ -59,8 +59,12 @@ def get_repository(post):
         for link in post.json_metadata["links"]:
             if link.startswith("/exit?url="):
                 link = link[len("/exit?url="):]
-            if pattern.match(link):
-                return link
+
+            try:
+                result = pattern.search(link).group(0)
+                return result
+            except AttributeError:
+                continue
     else:
         for line in post.body.split():
             if pattern.match(line):
