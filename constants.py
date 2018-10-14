@@ -137,4 +137,4 @@ UTOPIAN_ANTI_ABUSE = [antiabuse.strip() for
                       antiabuse in ANTI_ABUSE_SHEET.col_values(1)[1:]]
 
 # Scaling my personal voting weight
-SCALER = 1.2
+SCALER = 1.0
