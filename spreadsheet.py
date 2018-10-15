@@ -68,7 +68,7 @@ def get_repository(post):
     else:
         for line in post.body.split():
             try:
-                result = pattern.search(link).group(0)
+                result = pattern.search(line).group(0)
                 return result
             except AttributeError:
                 continue
