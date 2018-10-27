@@ -26,7 +26,7 @@ def upvote_comment(comment):
 
     comment = Comment(comment["url"])
     voters = [vote.voter for vote in comment.get_votes()]
-    if "amosbastian" in voters:
+    if "amosbastian" in voters or "utopian-io" in voters:
         constants.DB.comments.update_one(comment, {"$set": {"upvoted": True}})
 
     comment.vote(weight, "amosbastian")
@@ -44,7 +44,7 @@ def upvote_contribution(contribution):
         return
 
     voters = [vote.voter for vote in post.get_votes()]
-    if "amosbastian" in voters:
+    if "amosbastian" in voters or "utopian-io" in voters:
         constants.DB_UTEMPIAN.pending_contributions.update_one(
             contribution, {"$set": {"upvoted": True}})
         return
