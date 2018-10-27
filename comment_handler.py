@@ -37,7 +37,10 @@ def upvote_comment(comment):
 
 def upvote_contribution(contribution):
     """Upvotes the contribution with a pre-calculated weight."""
-    post = Comment(contribution["url"])
+    try:
+        post = Comment(contribution["url"])
+    except Exception:
+        constants.DB.pending_contributions.remove({"url": contribution["url"]})
 
     voters = [vote.voter for vote in post.get_votes()]
     if "amosbastian" in voters:
