@@ -41,6 +41,7 @@ def upvote_contribution(contribution):
         post = Comment(contribution["url"])
     except Exception:
         constants.DB.pending_contributions.remove({"url": contribution["url"]})
+        return
 
     voters = [vote.voter for vote in post.get_votes()]
     if "amosbastian" in voters:
