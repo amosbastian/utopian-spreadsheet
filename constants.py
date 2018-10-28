@@ -132,7 +132,7 @@ MINIMUM_SCORE = 10
 EXP_POWER = 2.1
 
 # GitHub
-REPOSITORY_REGEX = "http(s)?://github.com/[^\r\n\t\f\v/ ]*/[^\r\n\t\f\v/ ]*"
+REPOSITORY_REGEX = "http(s)?://github.com/[^\r\n\t\f\v/ ()\]\[:]*/[^\r\n\t\f\v/ ()\]\[]*"
 
 # Anti abuse
 ANTI_ABUSE_SHEET = SHEET.worksheet("Antiabuse")
