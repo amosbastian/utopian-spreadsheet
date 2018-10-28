@@ -233,9 +233,6 @@ def main():
                     f"Commenting on {steemit_url} - BANNED.")
                 banned_comment(steemit_url)
 
-            if "iamutopian" in tags and post.author not in moderators:
-                continue
-
             constants.UNREVIEWED.append_row(row)
             result = get_urls()
             constants.LOGGER.info(

@@ -11,15 +11,6 @@ def exponential_vote(score, category, url, vipo=False):
     """Calculates the exponential vote for the bot."""
     status = ""
 
-    if category == "iamutopian":
-        managers = [manager["account"] for manager
-                    in constants.DB_UTEMPIAN.managers.find()]
-        author = url.split("@")[-1].split("/")[0]
-        if author in managers:
-            category = "iamutopian-manager"
-        else:
-            category = "iamutopian-moderator"
-
     try:
         max_vote = constants.MAX_VOTE[category]
     except:

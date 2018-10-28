@@ -119,9 +119,7 @@ MAX_VOTE = {
     "copywriting": 30.0,
     "blog": 30.0,
     "anti-abuse": 50.0,
-    "iamutopian": 40.0,
-    "iamutopian-moderator": 40.0,
-    "iamutopian-manager": 55.0,
+    "iamutopian": 50.0,
 }
 MAX_TASK_REQUEST = 6.0
 
