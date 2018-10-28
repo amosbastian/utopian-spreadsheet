@@ -7,9 +7,18 @@ import os
 import requests
 
 
-def exponential_vote(score, category, vipo=False):
+def exponential_vote(score, category, url, vipo=False):
     """Calculates the exponential vote for the bot."""
     status = ""
+
+    if category == "iamutopian":
+        managers = [manager["account"] for manager
+                    in constants.DB_UTEMPIAN.managers.find()]
+        author = url.split("@")[-1].split("/")[0]
+        if author in managers:
+            category = "iamutopian-manager"
+        else:
+            category = "iamutopian-moderator"
 
     try:
         max_vote = constants.MAX_VOTE[category]
@@ -78,13 +87,6 @@ def add_comment(contribution):
 
 def move_to_reviewed(contribution, post):
     """Move contribution to the reviewed worksheet."""
-    if contribution.category == "blog":
-        tags = post.json_metadata["tags"]
-
-        if "iamutopian" in tags:
-            contribution.category = "iamutopian"
-            contribution.vote_status = ""
-
     constants.REVIEWED.append_row(list(contribution.__dict__.values()))
 
 
@@ -122,7 +124,7 @@ def main():
 
             category = contribution.category.strip()
             contribution.vote_status, contribution.weight = exponential_vote(
-                float(score), category, is_vipo)
+                float(score), category, contribution.url, is_vipo)
 
             if not moderator.upper() in ["BANNED", "IGNORED", "IGNORE",
                                          "IRRELEVANT"]:

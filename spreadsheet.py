@@ -23,6 +23,8 @@ def valid_category(tags):
             return True, category
         if category == "blog" or category == "blogs":
             return True, "blog"
+        elif category == "iamutopian":
+            return True, "iamutopian"
         elif "idea" in category or "suggestion" in category:
             return True, "ideas"
         elif category == "development":
@@ -215,6 +217,9 @@ def main():
                         f"{steemit_url} not made by accepted anti-abuse "
                         "contributor!")
                     continue
+                elif (category == "iamutopian" and
+                      post.author not in moderators):
+                    continue
             repository = get_repository(post)
 
             # If user banned, set moderator as BANNED and score to 0
@@ -236,8 +241,6 @@ def main():
             constants.LOGGER.info(
                 f"{steemit_url} has tags: {tags} and was added.")
             store_contribution(post, category)
-
-    moderator_points()
 
 
 if __name__ == '__main__':
