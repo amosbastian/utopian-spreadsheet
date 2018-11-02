@@ -1,10 +1,13 @@
+import os
+from datetime import datetime, timedelta
+
+import requests
 from beem.account import Account
 from beem.comment import Comment
-from contribution import Contribution
-from datetime import datetime, timedelta
+from beem.exceptions import ContentDoesNotExistsException
+
 import constants
-import os
-import requests
+from contribution import Contribution
 
 
 def exponential_vote(score, category, url, vipo=False):
@@ -101,7 +104,13 @@ def main():
                 contribution.url in already_voted_on):
             today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             contribution.review_date = today
-            post = Comment(contribution.url)
+
+            try:
+                post = Comment(contribution.url)
+            except ContentDoesNotExistsException:
+                constants.UNREVIEWED.delete_row(result.index(row) + 1)
+                return
+
             if contribution.url in already_voted_on:
                 contribution.moderator = "IGNORE"
                 contribution.score = 0
