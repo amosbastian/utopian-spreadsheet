@@ -34,6 +34,51 @@ def exponential_vote(score, category, url, vipo=False):
     return status, f"{weight:.2f}"
 
 
+def vote_contribution(contribution):
+    """Votes on the contribution with a scaled weight (dependent on the
+    contribution's category and weight).
+    """
+    if "@amosbastian" in contribution.url:
+        return
+
+    weight = (float(contribution.weight) /
+              max(constants.MAX_VOTE.values()) * 100.0) / constants.SCALER
+    contribution = Comment(contribution.url)
+    voters = [vote.voter for vote in contribution.get_votes()]
+    if "amosbastian" not in voters:
+        contribution.vote(weight, "amosbastian")
+
+
+def add_comment(contribution):
+    """Adds the authorperm of the moderator's comment to the database."""
+    if contribution.moderator == "amosbastian":
+        return
+
+    post = Comment(contribution.url)
+
+    inserted = False
+    for comment in post.get_replies():
+        if comment.author == contribution.moderator:
+            age = comment.time_elapsed()
+            collection = constants.DB.comments
+            collection.insert({
+                "url": comment.authorperm,
+                "upvote_time": datetime.now() + timedelta(minutes=10) - age,
+                "inserted": datetime.now(),
+                "upvoted": False,
+                "category": contribution.category
+            })
+            inserted = True
+
+    if not inserted:
+        collection = constants.DB.missed_posts
+        collection.insert({
+            "url": contribution.url,
+            "moderator": contribution.moderator,
+            "category": contribution.category
+        })
+
+
 def move_to_reviewed(contribution, post):
     """Move contribution to the reviewed worksheet."""
     constants.REVIEWED.append_row(list(contribution.__dict__.values()))
@@ -91,6 +136,10 @@ def main():
 
             constants.UNREVIEWED.delete_row(result.index(row) + 1)
             move_to_reviewed(contribution, post)
+
+            if float(score) > constants.MINIMUM_SCORE:
+                vote_contribution(contribution)
+                add_comment(contribution)
             return
 
 if __name__ == '__main__':
