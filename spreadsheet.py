@@ -1,15 +1,16 @@
-from beem.discussions import Query, Discussions_by_created
-from beem.comment import Comment
-from datetime import date, datetime, timedelta
-from oauth2client.service_account import ServiceAccountCredentials
-from urllib.parse import urlparse
-
-import constants
-import gspread
 import json
 import logging
 import os
 import re
+from datetime import date, datetime, timedelta
+from urllib.parse import urlparse
+
+import gspread
+from beem.comment import Comment
+from beem.discussions import Discussions_by_created, Query
+from oauth2client.service_account import ServiceAccountCredentials
+
+import constants
 
 
 def valid_category(tags):
@@ -78,39 +79,6 @@ def get_repository(post):
     return ""
 
 
-def moderator_points():
-    """
-    Return a dictionary containing a moderator and their points.
-    """
-    moderators = {}
-    collection = constants.DB.moderators
-
-    community_managers = [
-        moderator["account"] for moderator in
-        collection.find({"supermoderator": True})]
-
-    utopian_fest = constants.UTOPIAN_FEST.col_values(1)
-
-    for moderator in set(community_managers + utopian_fest):
-        moderators.setdefault(moderator, 0)
-        if moderator in community_managers:
-            moderators[moderator] += 100.0
-
-            # Check for BOSSPOEM or TECHSLUT
-            if moderator == "espoem" or moderator == "techslut":
-                moderators[moderator] = 400.0
-
-        # Utopian Fest bonus
-        if moderator in utopian_fest:
-            moderators[moderator] += 50.0
-
-    # Save dictionary as JSON with date of last Thursday
-    with open(
-            f"/home/amos/utopian/utopian/static/{constants.THIS_WEEK}.json",
-            "w") as fp:
-        json.dump(moderators, fp, indent=4)
-
-
 def get_urls():
     """
     Returns all the URLs of the currently relevant worksheets.
@@ -118,15 +86,6 @@ def get_urls():
     return (constants.UNREVIEWED.col_values(3) +
             constants.REVIEWED.col_values(3) +
             constants.LAST.col_values(3))
-
-
-def banned_comment(url):
-    """
-    Comments on the given contribution letting them know that they are banned.
-    """
-    post = Comment(url)
-    comment = constants.COMMENT_BANNED.format(post.author)
-    post.reply(comment, author="amosbastian")
 
 
 def exponential_vote(score, category):
@@ -149,39 +108,6 @@ def exponential_vote(score, category):
 
 def percentage(part, whole):
     return 100 * float(part) / float(whole)
-
-
-def store_contribution(post, category):
-    """Stores a contribution in database for voting."""
-    contributions = constants.DB_UTEMPIAN.contributions.find(
-        {"author": post.author, "category": category})
-
-    scores = [contribution["score"] for contribution in contributions
-              if contribution["score"]]
-
-    if not scores:
-        return
-
-    rejected = scores.count(0)
-    accepted = len(scores) - rejected
-    upvote_percentage = percentage(accepted, len(scores))
-
-    if upvote_percentage < 66.0:
-        return
-
-    average_score = sum(scores) / len(scores)
-    weight = exponential_vote(average_score, category)
-    new_weight = (weight / max(constants.MAX_VOTE.values()) * 100.0) / constants.SCALER
-
-    collection = constants.DB_UTEMPIAN.pending_contributions
-    age = post.time_elapsed()
-    collection.insert({
-        "url": post.authorperm,
-        "upvote_time": datetime.now() + timedelta(minutes=10) - age,
-        "inserted": datetime.now(),
-        "upvoted": False,
-        "weight": new_weight
-    })
 
 
 def main():
@@ -208,14 +134,9 @@ def main():
                     continue
                 elif (category == "translations" and
                       post.author not in constants.UTOPIAN_TRANSLATORS):
-                    constants.LOGGER.error(
-                        f"{steemit_url} not made by accepted translator!")
                     continue
                 elif (category == "anti-abuse" and
                       post.author not in constants.UTOPIAN_ANTI_ABUSE):
-                    constants.LOGGER.error(
-                        f"{steemit_url} not made by accepted anti-abuse "
-                        "contributor!")
                     continue
                 elif (category == "iamutopian" and
                       post.author not in moderators):
@@ -229,15 +150,9 @@ def main():
                 today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 row = ["BANNED", str(today), steemit_url, repository, category,
                        "0", "", "", "", "", 0]
-                constants.LOGGER.info(
-                    f"Commenting on {steemit_url} - BANNED.")
-                banned_comment(steemit_url)
 
             constants.UNREVIEWED.append_row(row)
             result = get_urls()
-            constants.LOGGER.info(
-                f"{steemit_url} has tags: {tags} and was added.")
-            store_contribution(post, category)
 
 
 if __name__ == '__main__':
