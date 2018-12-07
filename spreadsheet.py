@@ -211,12 +211,6 @@ def main():
                     constants.LOGGER.error(
                         f"{steemit_url} not made by accepted translator!")
                     continue
-                elif (category == "anti-abuse" and
-                      post.author not in constants.UTOPIAN_ANTI_ABUSE):
-                    constants.LOGGER.error(
-                        f"{steemit_url} not made by accepted anti-abuse "
-                        "contributor!")
-                    continue
                 elif (category == "iamutopian" and
                       post.author not in moderators):
                     continue
